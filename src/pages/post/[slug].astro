@@ -1,0 +1,36 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { ghostClient } from "@lib/ghost";
+
+export async function getStaticPaths() {
+    const posts = await ghostClient.posts.browse({ limit: "all" });
+
+    return posts.map((post) => {
+        return {
+            params: {
+                slug: post.slug,
+            },
+            props: {
+                post: post,
+            },
+        };
+    });
+}
+
+const { post } = Astro.props;
+---
+
+<!DOCTYPE html>
+<Layout title={post.title}>
+    <head>
+        <title>{post.title}</title>
+    </head>
+    <body>
+        <img src={post.feature_image} alt={post.title} />
+
+        <h1>{post.title}</h1>
+        <p>{post.reading_time} min read</p>
+
+        <Fragment set:html={post.html} />
+    </body>
+</Layout>
