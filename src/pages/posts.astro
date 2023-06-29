@@ -1,23 +1,76 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Card from "../components/Card.astro";
+import dayjs from "dayjs";
 
 import { ghostClient } from "@lib/ghost";
-const posts = await ghostClient.posts.browse({ limit: "all" });
-console.dir(posts[0]);
+export type Post = {
+  id: string;
+  title: string;
+  html: string;
+  published_at: string;
+  feature_image: string;
+  slug: string;
+};
+
+const posts: Post[] = await ghostClient.posts.browse({ limit: "all" });
+
+posts.forEach(
+  (post) => (post.published_at = dayjs(post.published_at).format("YYYY-MM-DD"))
+);
+
+console.log(posts[0]);
 ---
 
-<Layout title="Welcome to Astro.">
-  <main>
+<Layout title="아티클 | 코멘토 개발자">
+  <section class="col-span-12 grid grid-cols-12 gap-6 py-[80px]">
+    <a href={`/post/${posts[0].slug}`} class="col-span-6">
+      <div class="flex flex-col">
+        <div class="w-full h-[296px]">
+          <img
+            src={posts[0].feature_image}
+            alt=""
+            class="rounded-[10px] h-full object-cover w-full"
+            width="558"
+            height="296"
+          />
+        </div>
+        <p class="text-2xl font-semibold mt-2">{posts[0].title}</p>
+      </div>
+    </a>
+    <a href={`/post/${posts[1].slug}`} class="col-span-6">
+      <div class="flex flex-col">
+        <div class="w-full h-[296px]">
+          <img
+            src={posts[1].feature_image}
+            alt=""
+            class="rounded-[10px] h-full object-cover w-full"
+            width="558"
+            height="296"
+          />
+        </div>
+        <p class="text-2xl font-semibold mt-2">{posts[1].title}</p>
+      </div>
+    </a>
     {
-      posts.map((post) => (
-        <a href={`/post/${post.slug}`}>
-          <div class="flex flex-col">
-            <img src={post.feature_image} alt="" />
-            <p>{post.title}</p>
+      posts.slice(2).map((post) => (
+        <a href={`/post/${post.slug}`} class="col-span-3">
+          <div class="flex flex-col col-span-3">
+            <div class="w-full h-[136px]">
+              <img
+                src={post.feature_image}
+                alt=""
+                class="rounded-[10px] h-full object-cover w-full"
+                width="267"
+                height="136"
+              />
+            </div>
+            <p class="text-base font-semibold mt-2 h-12 text-ellipsis">
+              {post.title}
+            </p>
+            <p class="text-xs text-gray-400 mt-2">{post.published_at}</p>
           </div>
         </a>
       ))
     }
-  </main>
+  </section>
 </Layout>

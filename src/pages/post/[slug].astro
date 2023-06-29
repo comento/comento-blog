@@ -1,9 +1,13 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
+import { Post } from "src/pages/posts.astro";
 
 export async function getStaticPaths() {
-    const posts = await ghostClient.posts.browse({ limit: "all" });
+    const posts: Post[] = await ghostClient.posts.browse({
+        limit: "all",
+        include: "authors",
+    });
 
     return posts.map((post) => {
         return {
@@ -18,21 +22,30 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+console.log(post);
 ---
 
 <!DOCTYPE html>
-<Layout title={post.title}>
-    <head>
-        <title>{post.title}</title>
-    </head>
-    <body>
+<Layout title={post.title + " | 코멘토 개발자"}>
+    <article class="col-span-8 col-start-3 py-[80px]">
         <img src={post.feature_image} alt={post.title} />
 
-        <h1>{post.title}</h1>
-        <p>{post.reading_time} min read</p>
-
-        <article class="prose">
+        <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
+        <div class="flex items-center mt-2 gap-2">
+            <p class="flex items-center text-gray-400 text-sm gap-1">
+                <img
+                    src={post.authors[0].profile_image}
+                    width="24"
+                    height="24"
+                />
+                {post.authors[0].name}
+            </p>
+            <p class="text-gray-400 text-sm">
+                {post.reading_time} min read
+            </p>
+        </div>
+        <article class="prose mt-16">
             <Fragment set:html={post.html} />
         </article>
-    </body>
+    </article>
 </Layout>
