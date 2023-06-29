@@ -31,6 +31,8 @@ const { post } = Astro.props;
         <h1>{post.title}</h1>
         <p>{post.reading_time} min read</p>
 
-        <Fragment set:html={post.html} />
+        <article class="prose">
+            <Fragment set:html={post.html} />
+        </article>
     </body>
 </Layout>
