@@ -25,7 +25,9 @@ const { post } = Astro.props;
 ---
 
 <Layout title={post.title + " | 코멘토 개발자"}>
-    <article class="col-span-8 col-start-3 py-[80px]">
+    <article
+        class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]"
+    >
         <div class="flex items-center mt-2 gap-2">
             <p class="flex items-center text-gray-400 text-sm gap-1">
                 <img

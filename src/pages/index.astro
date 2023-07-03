@@ -26,8 +26,12 @@ posts.forEach(
 ---
 
 <Layout title="아티클 | 코멘토 개발자">
-  <section class="col-span-12 grid grid-cols-12 gap-6 py-[80px]">
-    {posts.map((post) => <Card class="col-span-3" post={post} />)}
+  <section class="col-span-12 grid grid-cols-12 gap-6 py-[40px] lg:py-[80px]">
+    {
+      posts.map((post) => (
+        <Card class="col-span-12 lg:col-span-3" post={post} />
+      ))
+    }
   </section>
 </Layout>
 
