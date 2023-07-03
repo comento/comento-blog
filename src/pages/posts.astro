@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import dayjs from "dayjs";
 
 import { ghostClient } from "@lib/ghost";
+import Card from "@components/Card.astro";
 export type Post = {
   id: string;
   title: string;
@@ -10,67 +11,30 @@ export type Post = {
   published_at: string;
   feature_image: string;
   slug: string;
+  tags: { name: string }[];
+  excerpt: string;
 };
 
-const posts: Post[] = await ghostClient.posts.browse({ limit: "all" });
+const posts: Post[] = await ghostClient.posts.browse({
+  limit: "all",
+  include: "tags",
+});
 
 posts.forEach(
   (post) => (post.published_at = dayjs(post.published_at).format("YYYY-MM-DD"))
 );
 
-console.log(posts[0]);
+console.log(posts[posts.length - 1]);
 ---
 
 <Layout title="아티클 | 코멘토 개발자">
   <section class="col-span-12 grid grid-cols-12 gap-6 py-[80px]">
-    <a href={`/post/${posts[0].slug}`} class="col-span-6">
-      <div class="flex flex-col">
-        <div class="w-full h-[296px]">
-          <img
-            src={posts[0].feature_image}
-            alt=""
-            class="rounded-[10px] h-full object-cover w-full"
-            width="558"
-            height="296"
-          />
-        </div>
-        <p class="text-2xl font-semibold mt-2">{posts[0].title}</p>
-      </div>
-    </a>
-    <a href={`/post/${posts[1].slug}`} class="col-span-6">
-      <div class="flex flex-col">
-        <div class="w-full h-[296px]">
-          <img
-            src={posts[1].feature_image}
-            alt=""
-            class="rounded-[10px] h-full object-cover w-full"
-            width="558"
-            height="296"
-          />
-        </div>
-        <p class="text-2xl font-semibold mt-2">{posts[1].title}</p>
-      </div>
-    </a>
-    {
-      posts.slice(2).map((post) => (
-        <a href={`/post/${post.slug}`} class="col-span-3">
-          <div class="flex flex-col col-span-3">
-            <div class="w-full h-[136px]">
-              <img
-                src={post.feature_image}
-                alt=""
-                class="rounded-[10px] h-full object-cover w-full"
-                width="267"
-                height="136"
-              />
-            </div>
-            <p class="text-base font-semibold mt-2 h-12 text-ellipsis">
-              {post.title}
-            </p>
-            <p class="text-xs text-gray-400 mt-2">{post.published_at}</p>
-          </div>
-        </a>
-      ))
-    }
+    {posts.map((post) => <Card class="col-span-3" post={post} />)}
   </section>
 </Layout>
+
+<style>
+  body {
+    background-color: #f7f8f8;
+  }
+</style>

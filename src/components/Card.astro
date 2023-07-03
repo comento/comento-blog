@@ -1,63 +1,36 @@
 ---
-export interface Props {
-	title: string;
-	body: string;
-	href: string;
-}
+import { Post } from "src/pages/posts.astro";
+type Props = {
+	post: Post;
+	class: string;
+};
 
-const { href, title, body } = Astro.props;
+const { post, class: className } = Astro.props;
 ---
 
-<li class="link-card">
-	<a href={href}>
-		<h2>
-			{title}
-			<span>&rarr;</span>
-		</h2>
-		<p>
-			{body}
-		</p>
+<article
+	class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow"
+	class:list={className}
+>
+	<a class="flex flex-col h-full" href={`/post/${post.slug}`}>
+		<img class="aspect-video" src={post.feature_image} alt={post.title} />
+		<div class="bg-white p-5 flex-grow">
+			{
+				post.tags.length > 0 && (
+					<div class="text-primary text-[10px] font-semibold h-5">
+						{post.tags[0].name.toUpperCase()}
+					</div>
+				)
+			}
+			<h2 class="font-bold line-clamp-2">{post.title}</h2>
+			<p class="mt-1 text-ellipsis text-sm text-gray-600 line-clamp-4">
+				{post.excerpt}
+			</p>
+		</div>
+		<footer
+			class="bg-white px-5 text-xs font-semibold h-10 flex items-center border-t border-t-slate-100"
+		>
+			더 읽기
+		</footer>
 	</a>
-</li>
-<style>
-	.link-card {
-		list-style: none;
-		display: flex;
-		padding: 0.25rem;
-		background-color: white;
-		background-image: none;
-		background-size: 400%;
-		border-radius: 0.6rem;
-		background-position: 100%;
-		transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-	}
-
-	.link-card > a {
-		width: 100%;
-		text-decoration: none;
-		line-height: 1.4;
-		padding: 1rem 1.3rem;
-		border-radius: 0.35rem;
-		color: #111;
-		background-color: white;
-		opacity: 0.8;
-	}
-	h2 {
-		margin: 0;
-		font-size: 1.25rem;
-		transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-	}
-	p {
-		margin-top: 0.5rem;
-		margin-bottom: 0;
-		color: #444;
-	}
-	.link-card:is(:hover, :focus-within) {
-		background-position: 0;
-		background-image: var(--accent-gradient);
-	}
-	.link-card:is(:hover, :focus-within) h2 {
-		color: rgb(var(--accent));
-	}
-</style>
+</article>

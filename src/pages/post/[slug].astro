@@ -28,9 +28,6 @@ console.log(post);
 <!DOCTYPE html>
 <Layout title={post.title + " | 코멘토 개발자"}>
     <article class="col-span-8 col-start-3 py-[80px]">
-        <img src={post.feature_image} alt={post.title} />
-
-        <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
         <div class="flex items-center mt-2 gap-2">
             <p class="flex items-center text-gray-400 text-sm gap-1">
                 <img
@@ -44,7 +41,9 @@ console.log(post);
                 {post.reading_time} min read
             </p>
         </div>
-        <article class="prose mt-16">
+        <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
+        <img class="mt-10" src={post.feature_image} alt={post.title} />
+        <article class="prose lg:prose-lg mt-16">
             <Fragment set:html={post.html} />
         </article>
     </article>

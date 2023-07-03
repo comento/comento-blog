@@ -6,6 +6,9 @@ module.exports = {
       fontFamily: {
         sans: ["Pretendard"],
       },
+      colors: {
+        primary: "#2a7de1",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],
