@@ -7,7 +7,10 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "astro build && yarn sync && yarn invalidate",
+    "sync": "aws s3 sync ./dist/ s3://developer.comento.kr",
+    "invalidate": "aws cloudfront create-invalidation --distribution-id E3L96CM7GX7I2G --paths \"/*\" > /dev/null"
   },
   "dependencies": {
     "@astrojs/tailwind": "^4.0.0",
