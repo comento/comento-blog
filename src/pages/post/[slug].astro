@@ -1,7 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
-import { Post } from "src/pages/posts.astro";
+import { Post } from "src/pages/index.astro";
 
 export async function getStaticPaths() {
     const posts: Post[] = await ghostClient.posts.browse({
