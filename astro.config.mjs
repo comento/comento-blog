@@ -8,7 +8,4 @@ export default defineConfig({
   experimental: {
     redirects: true,
   },
-  redirects: {
-    "/": "/posts",
-  },
 });
