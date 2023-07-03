@@ -23,8 +23,6 @@ const posts: Post[] = await ghostClient.posts.browse({
 posts.forEach(
   (post) => (post.published_at = dayjs(post.published_at).format("YYYY-MM-DD"))
 );
-
-console.log(posts[posts.length - 1]);
 ---
 
 <Layout title="아티클 | 코멘토 개발자">

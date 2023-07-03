@@ -22,10 +22,8 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-console.log(post);
 ---
 
-<!DOCTYPE html>
 <Layout title={post.title + " | 코멘토 개발자"}>
     <article class="col-span-8 col-start-3 py-[80px]">
         <div class="flex items-center mt-2 gap-2">

@@ -4,7 +4,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Pretendard"],
+        sans: [
+          "Pretendard Variable",
+          "Segoe UI",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
       },
       colors: {
         primary: "#2a7de1",
