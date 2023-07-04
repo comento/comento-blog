@@ -4,25 +4,16 @@ import dayjs from "dayjs";
 
 import { ghostClient } from "@lib/ghost";
 import Card from "@components/Card.astro";
-export type Post = {
-  id: string;
-  title: string;
-  html: string;
-  published_at: string;
-  feature_image: string;
-  slug: string;
-  tags: { name: string }[];
-  excerpt: string;
-};
 
-const posts: Post[] = await ghostClient.posts.browse({
+const posts = await ghostClient.posts.browse({
   limit: "all",
   include: "tags",
+  fields: "id, title, feature_image, excerpt, published_at, slug, primary_tag",
 });
 
-posts.forEach(
-  (post) => (post.published_at = dayjs(post.published_at).format("YYYY-MM-DD"))
-);
+posts.forEach((post) => {
+  post.published_at = dayjs(post.published_at).format("YYYY-MM-DD");
+});
 ---
 
 <Layout title="아티클 | 코멘토 개발자">

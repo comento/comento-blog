@@ -1,7 +1,7 @@
 ---
-import { Post } from "src/pages/index.astro";
+import { PostOrPage } from "@tryghost/content-api";
 type Props = {
-	post: Post;
+	post: PostOrPage;
 	class: string;
 };
 
@@ -16,9 +16,9 @@ const { post, class: className } = Astro.props;
 		<img class="aspect-video" src={post.feature_image} alt={post.title} />
 		<div class="bg-white p-5 flex-grow">
 			{
-				post.tags.length > 0 && (
+				post.primary_tag && (
 					<div class="text-primary text-[10px] font-semibold h-5">
-						{post.tags[0].name.toUpperCase()}
+						{post.primary_tag.name.toUpperCase()}
 					</div>
 				)
 			}

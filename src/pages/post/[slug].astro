@@ -1,12 +1,12 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
-import { Post } from "src/pages/index.astro";
 
 export async function getStaticPaths() {
-    const posts: Post[] = await ghostClient.posts.browse({
+    const posts = await ghostClient.posts.browse({
         limit: "all",
         include: "authors",
+        fields: "title,reading_time,feature_image,title,html,slug,primary_author",
     });
 
     return posts.map((post) => {
@@ -22,7 +22,6 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-console.log(post.authors);
 ---
 
 <Layout title={post.title + " | 코멘토 개발자"}>
@@ -32,11 +31,11 @@ console.log(post.authors);
         <div class="flex items-center mt-2 gap-2">
             <p class="flex items-center text-gray-400 text-sm gap-1">
                 <img
-                    src={post.authors[0].profile_image}
+                    src={post.primary_author.profile_image}
                     width="24"
                     height="24"
                 />
-                {post.authors[0].name}
+                {post.primary_author.name}
             </p>
             <p class="text-gray-400 text-sm">
                 {post.reading_time} min read
