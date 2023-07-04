@@ -1,0 +1,7 @@
+---
+const { name } = Astro.props;
+
+const { default: iconHtml } = await import(`../icons/${name}.svg?raw`);
+---
+
+<Fragment set:html={iconHtml} />
