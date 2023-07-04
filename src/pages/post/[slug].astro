@@ -22,6 +22,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+console.log(post.authors);
 ---
 
 <Layout title={post.title + " | 코멘토 개발자"}>
