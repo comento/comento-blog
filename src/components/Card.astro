@@ -1,18 +1,21 @@
 ---
+import { getPostSlug } from "@lib/post";
 import { PostOrPage } from "@tryghost/content-api";
+import dayjs from "dayjs";
 type Props = {
 	post: PostOrPage;
 	class: string;
 };
 
 const { post, class: className } = Astro.props;
+const postLink = `/post/${getPostSlug(post)}`;
 ---
 
 <article
 	class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow"
 	class:list={className}
 >
-	<a class="flex flex-col h-full" href={`/post/${post.slug}`}>
+	<a class="flex flex-col h-full" href={postLink}>
 		<img class="aspect-video" src={post.feature_image} alt={post.title} />
 		<div class="bg-white p-5 flex-grow">
 			{

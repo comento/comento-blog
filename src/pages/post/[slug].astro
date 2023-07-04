@@ -1,18 +1,19 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
+import { getPostSlug } from "@lib/post";
 
 export async function getStaticPaths() {
     const posts = await ghostClient.posts.browse({
         limit: "all",
         include: "authors",
-        fields: "title,reading_time,feature_image,title,html,slug,primary_author",
+        fields: "title,reading_time,feature_image,title,html,slug,primary_author,published_at",
     });
 
     return posts.map((post) => {
         return {
             params: {
-                slug: post.slug,
+                slug: getPostSlug(post),
             },
             props: {
                 post: post,
