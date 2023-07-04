@@ -20,8 +20,13 @@ const { pathname } = Astro.url;
             </a>
             <ul class="flex items-center h-full gap-6">
                 <li
-                    class="text-sm text-gray-800 hover:text-blue-600 flex-shrink-0"
-                    class:list={[{ "text-blue-600": pathname === "/" }]}
+                    class="text-sm hover:text-blue-600 flex-shrink-0"
+                    class:list={[
+                        {
+                            "text-blue-600": pathname === "/",
+                            "text-gray-800": pathname !== "/",
+                        },
+                    ]}
                 >
                     <a href="/">블로그</a>
                 </li>
