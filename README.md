@@ -1,54 +1,29 @@
-# Astro Starter Kit: Basics
+# 코멘토 개발팀 블로그
 
-```
-npm create astro@latest -- --template basics
-```
+마지막 수정일자: 2023-07-06
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## 구조 설명
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Ghost의 컨텐츠를 가져와서 사용합니다.
 
-![basics](https://user-images.githubusercontent.com/4677417/186188965-73453154-fdec-4d6b-9c34-cb35c248ae5b.png)
+- index에서는 목록을 불러와서 최신순으로 보여줍니다.
+- [slug]에서는 모든 post를 불러와서 페이지를 정적 생성합니다.
+- `Layout.astro`로 전체 레이아웃을 통일합니다.
 
-## 🚀 Project Structure
+SSG 방식이기 때문에 컨텐츠의 추가, 수정, 삭제를 반영하려면 배포를 새로 해주어야 합니다.
 
-Inside of your Astro project, you'll see the following folders and files:
+## yarn(npm) 명령어 사용 방법
 
-```
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+yarn dev # 로컬 개발 서버 작동
+yarn deploy # 빌드 후 배포
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 사용한 기술 출처
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Astro: 프로젝트 전체 [링크](https://astro.build)
+- HeroIcons [링크](https://heroicons.com/)
+- Tailwind CSS [링크](https://tailwindcss.com/)
+- Ghost Content API JS Client [링크](https://ghost.org/docs/content-api/javascript/)
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:3000`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+기능 추가 등은 Astro와 Ghost 문서를 확인해서 진행해주세요.
