@@ -16,7 +16,13 @@ const postLink = `/post/${getPostSlug(post)}`;
 	class:list={className}
 >
 	<a class="flex flex-col h-full" href={postLink}>
-		<img class="aspect-video" src={post.feature_image} alt={post.title} />
+		<img
+			class="aspect-video"
+			src={post.feature_image}
+			alt={post.title}
+			width="267"
+			height="150"
+		/>
 		<div class="bg-white p-5 flex-grow">
 			{
 				post.primary_tag && (
