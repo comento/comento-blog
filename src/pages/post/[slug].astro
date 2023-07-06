@@ -30,15 +30,16 @@ const { post } = Astro.props;
         class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]"
     >
         <div class="flex items-center mt-2 gap-2">
-            <p class="flex items-center text-gray-400 text-sm gap-1">
+            <p class="flex items-center text-gray-600 text-sm gap-1">
                 <img
                     src={post.primary_author.profile_image}
                     width="24"
                     height="24"
+                    alt={`${post.primary_author.name} 프로필 이미지`}
                 />
                 {post.primary_author.name}
             </p>
-            <p class="text-gray-400 text-sm">
+            <p class="text-gray-600 text-sm">
                 {post.reading_time} min read
             </p>
         </div>
