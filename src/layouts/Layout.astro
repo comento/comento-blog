@@ -8,6 +8,10 @@ export interface Props {
 
 const { title } = Astro.props;
 const metaTitle = title + " | 코멘토 개발팀";
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const canonicalUrlHref = canonicalUrl.href.endsWith("/")
+	? canonicalUrl.href.slice(0, -1)
+	: canonicalUrl.href;
 ---
 
 <!DOCTYPE html>
@@ -45,6 +49,7 @@ const metaTitle = title + " | 코멘토 개발팀";
 		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>{metaTitle}</title>
+		<link rel="canonical" href={canonicalUrlHref} />
 	</head>
 	<body>
 		<Header />
