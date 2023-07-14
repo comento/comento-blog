@@ -7,7 +7,7 @@ export async function getStaticPaths() {
     const posts = await ghostClient.posts.browse({
         limit: "all",
         include: "authors",
-        fields: "title,reading_time,feature_image,title,html,slug,primary_author,published_at",
+        fields: "title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt",
     });
 
     return posts.map((post) => {
@@ -26,6 +26,15 @@ const { post } = Astro.props;
 ---
 
 <Layout title={post.title}>
+    <Fragment slot="head">
+        <meta name="author" content={post.primary_author.name} />
+        <meta name="description" content={post.excerpt} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.excerpt} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={Astro.url} />
+        <meta property="og:image" content={post.feature_image} />
+    </Fragment>
     <article
         class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]"
     >

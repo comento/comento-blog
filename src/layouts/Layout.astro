@@ -18,10 +18,6 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
 <html lang="ko">
 	<head>
 		<meta charset="UTF-8" />
-		<meta
-			name="description"
-			content="코멘토를 만들어가는 개발자들의 일상, 생각, 고민이 담긴 블로그입니다. 업무 중 만난 다양한 일의 기록이 남아있습니다."
-		/>
 		<meta name="viewport" content="width=device-width" />
 		<link
 			rel="icon"
@@ -47,9 +43,11 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
 			type="font/woff2"
 			crossorigin=""
 		/>
-		<meta name="generator" content={Astro.generator} />
 		<title>{metaTitle}</title>
 		<link rel="canonical" href={canonicalUrlHref} />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="og:site_name" content="코멘토 개발팀 블로그" />
+		<slot name="head" />
 	</head>
 	<body>
 		<Header />

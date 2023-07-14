@@ -7,4 +7,5 @@ export default defineConfig({
   site: "https://developer.comento.kr",
   integrations: [tailwind(), sitemap()],
   trailingSlash: "never",
+  compressHTML: true,
 });
