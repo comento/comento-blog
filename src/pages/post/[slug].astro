@@ -1,4 +1,5 @@
 ---
+import shiki from "shiki";
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
 import { getPostSlug } from "@lib/post";
@@ -10,16 +11,50 @@ export async function getStaticPaths() {
         fields: "title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt",
     });
 
-    return posts.map((post) => {
-        return {
+    const highlighter = await shiki.getHighlighter({
+        theme: "github-dark",
+        langs: [],
+    });
+
+    const paths = [];
+
+    for await (const post of posts) {
+        const matches = post.html.matchAll(
+            /(?<block><pre><code class="language-(?<lang>.+?)">(?<code>[\s\S]*?)<\/code><\/pre>)/g
+        );
+
+        for await (const match of [...matches]) {
+            const originalCode = match.groups.code;
+            const lang = match.groups.lang.toLowerCase() as shiki.Lang;
+            if (!originalCode || !lang) {
+                return;
+            }
+            if (!highlighter.getLoadedLanguages().includes(lang)) {
+                await highlighter.loadLanguage(lang);
+            }
+            const block = match.groups.block;
+            const replacedCode = originalCode
+                .replace(/&lt;/g, "<")
+                .replace(/&gt;/g, ">");
+            post.html = post.html.replace(
+                block,
+                highlighter.codeToHtml(replacedCode, {
+                    lang: "jsx",
+                })
+            );
+        }
+
+        paths.push({
             params: {
                 slug: getPostSlug(post),
             },
             props: {
                 post: post,
             },
-        };
-    });
+        });
+    }
+
+    return paths;
 }
 
 const { post } = Astro.props;
@@ -35,21 +70,6 @@ const { post } = Astro.props;
         <meta property="og:url" content={Astro.url} />
         <meta property="og:image" content={post.feature_image} />
         <link rel="preload" as="image" href={post.feature_image} />
-        <link
-            rel="preload"
-            as="style"
-            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css"
-            integrity="sha512-vswe+cgvic/XBoF1OcM/TeJ2FW0OofqAVdCZiEYkd6dwGXthvkSFWOoGGJgS2CW70VK5dQM5Oh+7ne47s74VTg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css"
-            integrity="sha512-vswe+cgvic/XBoF1OcM/TeJ2FW0OofqAVdCZiEYkd6dwGXthvkSFWOoGGJgS2CW70VK5dQM5Oh+7ne47s74VTg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
     </Fragment>
     <article
         class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]"
@@ -69,21 +89,15 @@ const { post } = Astro.props;
             </p>
         </div>
         <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
-        <img class="mt-10" src={post.feature_image} alt={post.title} />
+        <img
+            class="mt-10"
+            src={post.feature_image}
+            alt={post.title}
+            width="752"
+            height="499"
+        />
         <article class="prose lg:prose-lg mt-16">
             <Fragment set:html={post.html} />
         </article>
     </article>
-    <Fragment slot="script">
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-core.min.js"
-            integrity="sha512-9khQRAUBYEJDCDVP2yw3LRUQvjJ0Pjx0EShmaQjcHa6AXiOv6qHQu9lCAIR8O+/D8FtaCoJ2c0Tf9Xo7hYH01Q=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"
-            integrity="sha512-fTl/qcO1VgvKtOMApX2PdZzkziyr2stM65GYPLGuYMnuMm1z2JLJG6XVU7C/mR+E7xBUqCivykuhlzfqxXBXbg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"></script>
-    </Fragment>
 </Layout>
