@@ -34,6 +34,22 @@ const { post } = Astro.props;
         <meta property="og:type" content="article" />
         <meta property="og:url" content={Astro.url} />
         <meta property="og:image" content={post.feature_image} />
+        <link rel="preload" as="image" href={post.feature_image} />
+        <link
+            rel="preload"
+            as="style"
+            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css"
+            integrity="sha512-vswe+cgvic/XBoF1OcM/TeJ2FW0OofqAVdCZiEYkd6dwGXthvkSFWOoGGJgS2CW70VK5dQM5Oh+7ne47s74VTg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css"
+            integrity="sha512-vswe+cgvic/XBoF1OcM/TeJ2FW0OofqAVdCZiEYkd6dwGXthvkSFWOoGGJgS2CW70VK5dQM5Oh+7ne47s74VTg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
     </Fragment>
     <article
         class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]"
