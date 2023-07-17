@@ -36,13 +36,6 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
 			as="image"
 			href="https://cdn.comento.kr/images/logo/logo-comento-typo-type.svg"
 		/>
-		<link
-			rel="preload"
-			href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css"
-			as="font"
-			type="font/woff2"
-			crossorigin=""
-		/>
 		<title>{metaTitle}</title>
 		<link rel="canonical" href={canonicalUrlHref} />
 		<meta name="generator" content={Astro.generator} />
@@ -55,29 +48,16 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
 			<slot />
 		</MainLayout>
 		<Footer />
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-core.min.js"
-			integrity="sha512-9khQRAUBYEJDCDVP2yw3LRUQvjJ0Pjx0EShmaQjcHa6AXiOv6qHQu9lCAIR8O+/D8FtaCoJ2c0Tf9Xo7hYH01Q=="
-			crossorigin="anonymous"
-			referrerpolicy="no-referrer"></script>
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/plugins/autoloader/prism-autoloader.min.js"
-			integrity="sha512-fTl/qcO1VgvKtOMApX2PdZzkziyr2stM65GYPLGuYMnuMm1z2JLJG6XVU7C/mR+E7xBUqCivykuhlzfqxXBXbg=="
-			crossorigin="anonymous"
-			referrerpolicy="no-referrer"></script>
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/components/prism-php.min.js"
-			integrity="sha512-6UGCfZS8v5U+CkSBhDy+0cA3hHrcEIlIy2++BAjetYt+pnKGWGzcn+Pynk41SIiyV2Oj0IBOLqWCKS3Oa+v/Aw=="
-			crossorigin="anonymous"
-			referrerpolicy="no-referrer"></script>
+		<slot name="script" />
 	</body>
 </html>
 
 <style is:global>
-	@font-face {
+	/* @font-face {
 		font-family: "Pretendard Variable";
 		src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css")
 			format("woff2");
 		font-display: swap;
-	}
+	} */
+	@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css");
 </style>
