@@ -1,103 +1,114 @@
 ---
-import shiki from "shiki";
+import shiki, { BUNDLED_LANGUAGES } from "shiki";
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
 import { getPostSlug } from "@lib/post";
 
 export async function getStaticPaths() {
-    const posts = await ghostClient.posts.browse({
-        limit: "all",
-        include: "authors",
-        fields: "title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt",
-    });
+  const posts = await ghostClient.posts.browse({
+    limit: "all",
+    include: "authors",
+    fields:
+      "title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt",
+  });
 
-    const highlighter = await shiki.getHighlighter({
-        theme: "github-dark",
-        langs: [],
-    });
+  const highlighter = await shiki.getHighlighter({
+    theme: "github-dark",
+    langs: [
+      "shell",
+      "javascript",
+      "yaml",
+      "dart",
+      "swift",
+      "java",
+      "sql",
+      "json",
+      "jsx",
+      "php",
+    ],
+  });
 
-    const paths = [];
+  const paths = [];
 
-    for await (const post of posts) {
-        const matches = post.html.matchAll(
-            /(?<block><pre><code class="language-(?<lang>.+?)">(?<code>[\s\S]*?)<\/code><\/pre>)/g
-        );
+  for await (const post of posts) {
+    const matches = post.html.matchAll(
+      /(?<block><pre><code class="language-(?<lang>.+?)">(?<code>[\s\S]*?)<\/code><\/pre>)/g
+    );
 
-        for await (const match of [...matches]) {
-            const originalCode = match.groups.code;
-            const lang = match.groups.lang.toLowerCase() as shiki.Lang;
-            if (!originalCode || !lang) {
-                return;
-            }
-            if (!highlighter.getLoadedLanguages().includes(lang)) {
-                await highlighter.loadLanguage(lang);
-            }
-            const block = match.groups.block;
-            const replacedCode = originalCode
-                .replace(/&lt;/g, "<")
-                .replace(/&gt;/g, ">");
-            post.html = post.html.replace(
-                block,
-                highlighter.codeToHtml(replacedCode, {
-                    lang: "jsx",
-                })
-            );
+    for await (const match of [...matches]) {
+      const originalCode = match.groups.code;
+      let lang = match.groups.lang.toLowerCase() as shiki.Lang;
+      if (!originalCode || !lang) {
+        return;
+      }
+      if (!highlighter.getLoadedLanguages().includes(lang)) {
+        if (lang === "bash") {
+          lang = "shell";
         }
-
-        paths.push({
-            params: {
-                slug: getPostSlug(post),
-            },
-            props: {
-                post: post,
-            },
-        });
+        await highlighter.loadLanguage(lang);
+      }
+      const block = match.groups.block;
+      const replacedCode = originalCode
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">");
+      post.html = post.html.replace(
+        block,
+        highlighter.codeToHtml(replacedCode, { lang })
+      );
     }
 
-    return paths;
+    paths.push({
+      params: {
+        slug: getPostSlug(post),
+      },
+      props: {
+        post: post,
+      },
+    });
+  }
+
+  return paths;
 }
 
 const { post } = Astro.props;
 ---
 
 <Layout title={post.title}>
-    <Fragment slot="head">
-        <meta name="author" content={post.primary_author.name} />
-        <meta name="description" content={post.excerpt} />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={Astro.url} />
-        <meta property="og:image" content={post.feature_image} />
-        <link rel="preload" as="image" href={post.feature_image} />
-    </Fragment>
-    <article
-        class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]"
-    >
-        <div class="flex items-center mt-2 gap-2">
-            <p class="flex items-center text-gray-600 text-sm gap-1">
-                <img
-                    src={post.primary_author.profile_image}
-                    width="24"
-                    height="24"
-                    alt={`${post.primary_author.name} 프로필 이미지`}
-                />
-                {post.primary_author.name}
-            </p>
-            <p class="text-gray-600 text-sm">
-                {post.reading_time} min read
-            </p>
-        </div>
-        <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
+  <Fragment slot="head">
+    <meta name="author" content={post.primary_author.name} />
+    <meta name="description" content={post.excerpt} />
+    <meta property="og:title" content={post.title} />
+    <meta property="og:description" content={post.excerpt} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:image" content={post.feature_image} />
+    <link rel="preload" as="image" href={post.feature_image} />
+  </Fragment>
+  <article class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]">
+    <div class="flex items-center mt-2 gap-2">
+      <p class="flex items-center text-gray-600 text-sm gap-1">
         <img
-            class="mt-10"
-            src={post.feature_image}
-            alt={post.title}
-            width="752"
-            height="499"
+          src={post.primary_author.profile_image}
+          width="24"
+          height="24"
+          alt={`${post.primary_author.name} 프로필 이미지`}
         />
-        <article class="prose lg:prose-lg mt-16">
-            <Fragment set:html={post.html} />
-        </article>
+        {post.primary_author.name}
+      </p>
+      <p class="text-gray-600 text-sm">
+        {post.reading_time} min read
+      </p>
+    </div>
+    <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
+    <img
+      class="mt-10"
+      src={post.feature_image}
+      alt={post.title}
+      width="752"
+      height="499"
+    />
+    <article class="prose lg:prose-lg mt-16">
+      <Fragment set:html={post.html} />
     </article>
+  </article>
 </Layout>
