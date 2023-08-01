@@ -3,6 +3,8 @@ import shiki, { BUNDLED_LANGUAGES } from "shiki";
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
 import { getPostSlug } from "@lib/post";
+import { RECRUIT_URL } from "src/constants";
+import PostLink from "@components/PostLink.astro";
 
 export async function getStaticPaths() {
   const posts = await ghostClient.posts.browse({
@@ -63,6 +65,8 @@ export async function getStaticPaths() {
       },
       props: {
         post: post,
+        previousPost: posts[posts.indexOf(post) + 1],
+        nextPost: posts[posts.indexOf(post) - 1],
       },
     });
   }
@@ -70,7 +74,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { post } = Astro.props;
+const { post, previousPost, nextPost } = Astro.props;
 ---
 
 <Layout title={post.title}>
@@ -84,7 +88,7 @@ const { post } = Astro.props;
     <meta property="og:image" content={post.feature_image} />
     <link rel="preload" as="image" href={post.feature_image} />
   </Fragment>
-  <article class="col-span-12 lg:col-span-8 lg:col-start-3 py-10 lg:py-[80px]">
+  <article class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px]">
     <div class="flex items-center mt-2 gap-2">
       <p class="flex items-center text-gray-600 text-sm gap-1">
         <img
@@ -109,6 +113,31 @@ const { post } = Astro.props;
     />
     <article class="prose lg:prose-lg mt-16">
       <Fragment set:html={post.html} />
+      <div class="mt-16">
+        <hr />
+        <p>
+          커리어의 성장을 돕는 코멘토에서 언제나 <strong
+            >함께 성장할 개발자</strong
+          >를 기다리고 있습니다. <a href={RECRUIT_URL} target="_blank"
+            >채용 페이지</a
+          >에서 코멘토가 어떤 회사인지, 어떤 사람을 찾는지 더 자세히
+          확인해보세요. 😊
+        </p>
+        <div class="flex justify-center">
+          <a href={RECRUIT_URL} target="_blank">
+            <button
+              class="border py-2 px-4 rounded-lg text-base border-primary text-primary hover:bg-primary hover:text-white"
+              >채용 공고 확인하기</button
+            >
+          </a>
+        </div>
+      </div>
     </article>
   </article>
+  <nav
+    class="flex justify-between col-span-12 lg:col-span-8 lg:col-start-3 mt-4 mb-10 lg:mb-[80px]"
+  >
+    {previousPost ? <PostLink post={previousPost} /> : <div />}
+    {nextPost && <PostLink post={nextPost} direction="right" />}
+  </nav>
 </Layout>

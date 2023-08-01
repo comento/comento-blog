@@ -1,0 +1,20 @@
+---
+import Icon from "@components/Icon.astro";
+import { getPostSlug } from "@lib/post";
+const { post, direction = "left" } = Astro.props;
+const { title, url } = post;
+const href = `/post/${getPostSlug(post)}`;
+---
+
+<a href={href} class="w-[250px] hover:text-primary">
+  <div class="flex flex-col">
+    <div class="flex gap-1 items-center">
+      {direction === "right" && "다음 글"}
+      <Icon name={`arrow-${direction}`} />
+      {direction === "left" && "이전 글"}
+    </div>
+    <span class="mt-3 block break-keep text-base font-semibold">
+      {title}
+    </span>
+  </div>
+</a>
