@@ -135,9 +135,23 @@ const { post, previousPost, nextPost } = Astro.props;
     </article>
   </article>
   <nav
-    class="flex justify-between col-span-12 lg:col-span-8 lg:col-start-3 mt-4 mb-10 lg:mb-[80px]"
+    class="flex flex-col gap-4 md:flex-row justify-between col-span-12 lg:col-span-8 lg:col-start-3 mt-4 mb-10 lg:mb-[80px]"
   >
-    {previousPost ? <PostLink post={previousPost} /> : <div />}
-    {nextPost && <PostLink post={nextPost} direction="right" />}
+    {
+      previousPost ? (
+        <PostLink class="order-2 md:order-none" post={previousPost} />
+      ) : (
+        <div />
+      )
+    }
+    {
+      nextPost && (
+        <PostLink
+          class="order-1 md:order-none"
+          post={nextPost}
+          direction="right"
+        />
+      )
+    }
   </nav>
 </Layout>
