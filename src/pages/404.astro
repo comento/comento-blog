@@ -1,0 +1,27 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="블로그">
+  <Fragment slot="head">
+    <meta
+      name="description"
+      content="코멘토를 만들어가는 개발자들의 일상, 생각, 고민이 담긴 블로그입니다. 업무 중 만난 다양한 일의 기록이 남아있습니다."
+    />
+  </Fragment>
+  <section class="col-span-12 grid grid-cols-12 gap-6 py-[40px] lg:py-[80px]">
+    <article
+      class="col-span-12 flex flex-col items-center justify-center gap-4"
+    >
+      <h1 class="text-4xl text-primary">404</h1>
+      <p class="text-2xl">페이지를 찾을 수 없습니다</p>
+      <a href="/" class="text-blue-600">블로그로 돌아가기</a>
+    </article>
+  </section>
+</Layout>
+
+<style>
+  body {
+    background-color: #f7f8f8;
+  }
+</style>
