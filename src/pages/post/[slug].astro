@@ -89,7 +89,7 @@ const { post, previousPost, nextPost } = Astro.props;
     <link rel="preload" as="image" href={post.feature_image} />
   </Fragment>
   <article
-    class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px]"
+    class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px] max-w-3xl mx-auto"
     transition:animate="initial"
   >
     <div class="flex items-center mt-2 gap-2">
@@ -108,7 +108,7 @@ const { post, previousPost, nextPost } = Astro.props;
     </div>
     <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
     <img
-      class="mt-10"
+      class="mt-10 w-full"
       src={post.feature_image}
       alt={post.title}
       width="752"

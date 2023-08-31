@@ -12,6 +12,13 @@ module.exports = {
           "sans-serif",
         ],
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: '100ch',
+          }
+        }
+      },
       colors: {
         primary: "#2a7de1",
       },
