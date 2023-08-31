@@ -13,14 +13,14 @@
     "invalidate": "aws cloudfront create-invalidation --distribution-id E3L96CM7GX7I2G --paths \"/*\" > /dev/null"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^1.3.3",
-    "@astrojs/tailwind": "^4.0.0",
+    "@astrojs/sitemap": "^3.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "@tailwindcss/typography": "^0.5.9",
     "@tryghost/admin-api": "^1.13.7",
     "@tryghost/content-api": "^1.11.13",
-    "astro": "^2.7.0",
+    "astro": "^3.0.3",
     "dayjs": "^1.11.8",
-    "tailwindcss": "^3.3.2",
-    "@tailwindcss/typography": "^0.5.9"
+    "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
     "@types/tryghost__content-api": "^1.3.11"
