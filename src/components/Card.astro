@@ -2,8 +2,8 @@
 import { getPostSlug } from "@lib/post";
 import { PostOrPage } from "@tryghost/content-api";
 type Props = {
-	post: PostOrPage;
-	class: string;
+  post: PostOrPage;
+  class: string;
 };
 
 const { post, class: className } = Astro.props;
@@ -11,34 +11,40 @@ const postLink = `/post/${getPostSlug(post)}`;
 ---
 
 <article
-	class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow"
-	class:list={className}
+  class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow"
+  class:list={className}
 >
-	<a class="flex flex-col h-full" href={postLink}>
-		<img
-			class="aspect-video w-full"
-			src={post.feature_image}
-			alt={post.title}
-			width="267"
-			height="150"
-		/>
-		<div class="bg-white p-5 flex-grow">
-			{
-				post.primary_tag && (
-					<div class="text-primary text-[10px] font-semibold h-5">
-						{post.primary_tag.name.toUpperCase()}
-					</div>
-				)
-			}
-			<h2 class="font-bold line-clamp-2">{post.title}</h2>
-			<p class="mt-1 text-ellipsis text-sm text-gray-600 line-clamp-4">
-				{post.excerpt}
-			</p>
-		</div>
-		<footer
-			class="bg-white px-5 text-xs font-semibold h-10 flex items-center border-t border-t-slate-100"
-		>
-			더 읽기
-		</footer>
-	</a>
+  <a class="flex flex-col h-full" href={postLink}>
+    <img
+      class="aspect-video w-full"
+      src={post.feature_image}
+      alt={post.title}
+      width="267"
+      height="150"
+      transition:name={`feature-image-${post.id}`}
+    />
+    <div class="bg-white p-5 flex-grow">
+      {
+        post.primary_tag && (
+          <div class="text-primary text-[10px] font-semibold h-5">
+            {post.primary_tag.name.toUpperCase()}
+          </div>
+        )
+      }
+      <h2 class="font-bold line-clamp-2">
+        {post.title}
+      </h2>
+      <p
+        class="mt-1 text-ellipsis text-sm text-gray-600 line-clamp-4"
+        transition:name={`content-${post.id}`}
+      >
+        {post.excerpt}
+      </p>
+    </div>
+    <footer
+      class="bg-white px-5 text-xs font-semibold h-10 flex items-center border-t border-t-slate-100"
+    >
+      더 읽기
+    </footer>
+  </a>
 </article>
