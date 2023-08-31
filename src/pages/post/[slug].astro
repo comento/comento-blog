@@ -5,6 +5,7 @@ import { ghostClient } from "@lib/ghost";
 import { getPostSlug } from "@lib/post";
 import { RECRUIT_URL } from "src/constants";
 import PostLink from "@components/PostLink.astro";
+import dayjs from "dayjs";
 
 export async function getStaticPaths() {
   const posts = await ghostClient.posts.browse({
@@ -59,6 +60,8 @@ export async function getStaticPaths() {
       );
     }
 
+    post.published_at = dayjs(post.published_at).format("YYYY.MM.DD");
+
     paths.push({
       params: {
         slug: getPostSlug(post),
@@ -92,23 +95,30 @@ const { post, previousPost, nextPost } = Astro.props;
     class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px] max-w-3xl mx-auto"
     transition:animate="initial"
   >
-    <div class="flex items-center mt-2 gap-2">
-      <p class="flex items-center text-gray-600 text-sm gap-1">
+    <h1 class="text-3xl font-semibold mb-8">{post.title}</h1>
+    <div class="flex items-center gap-3">
+      <p class="flex items-center text-gray-600 text-sm">
         <img
           src={post.primary_author.profile_image}
-          width="24"
-          height="24"
+          width="52"
+          height="52"
           alt={`${post.primary_author.name} 프로필 이미지`}
+          class="rounded-full"
         />
-        {post.primary_author.name}
       </p>
-      <p class="text-gray-600 text-sm">
-        {post.reading_time} min read
-      </p>
+      <div>
+        <strong>{post.primary_author.name}</strong>
+        <div class="flex items-center text-gray-400 text-sm gap-1">
+          <p>{post.published_at}</p>
+          <p>•</p>
+          <p>
+            {post.reading_time} min read
+          </p>
+        </div>
+      </div>
     </div>
-    <h1 class="text-3xl font-semibold mt-10">{post.title}</h1>
     <img
-      class="mt-10 w-full"
+      class="mt-16 w-full"
       src={post.feature_image}
       alt={post.title}
       width="752"
