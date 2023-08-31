@@ -1,4 +1,5 @@
 ---
+import { ViewTransitions } from "astro:transitions";
 import Footer from "@layouts/Footer.astro";
 import Header from "@layouts/Header.astro";
 import MainLayout from "@layouts/MainLayout.astro";
@@ -14,8 +15,8 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
   : canonicalUrl.href;
 ---
 
-<!DOCTYPE html>
-<html lang="ko">
+<!doctype html>
+<html lang="ko" transition:animate="none">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -45,6 +46,7 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
 
       gtag("config", "G-37S7B7384H");
     </script>
+    <ViewTransitions />
   </head>
   <body>
     <Header />
@@ -53,9 +55,8 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
     </MainLayout>
     <Footer />
     <slot name="script" />
+    <style is:global>
+      @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css");
+    </style>
   </body>
 </html>
-
-<style is:global>
-  @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css");
-</style>

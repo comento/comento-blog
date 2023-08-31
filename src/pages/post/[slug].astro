@@ -11,7 +11,7 @@ export async function getStaticPaths() {
     limit: "all",
     include: "authors",
     fields:
-      "title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt",
+      "id,title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt",
   });
 
   const highlighter = await shiki.getHighlighter({
@@ -88,7 +88,10 @@ const { post, previousPost, nextPost } = Astro.props;
     <meta property="og:image" content={post.feature_image} />
     <link rel="preload" as="image" href={post.feature_image} />
   </Fragment>
-  <article class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px]">
+  <article
+    class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px]"
+    transition:animate="initial"
+  >
     <div class="flex items-center mt-2 gap-2">
       <p class="flex items-center text-gray-600 text-sm gap-1">
         <img
@@ -110,8 +113,12 @@ const { post, previousPost, nextPost } = Astro.props;
       alt={post.title}
       width="752"
       height="499"
+      transition:name={`feature-image-${post.id}`}
     />
-    <article class="prose lg:prose-lg mt-16">
+    <article
+      class="prose lg:prose-lg mt-16"
+      transition:name={`content-${post.id}`}
+    >
       <Fragment set:html={post.html} />
       <div class="mt-16">
         <hr />
