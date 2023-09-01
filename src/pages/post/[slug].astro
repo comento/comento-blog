@@ -6,6 +6,7 @@ import { getPostSlug } from "@lib/post";
 import { RECRUIT_URL } from "src/constants";
 import PostLink from "@components/PostLink.astro";
 import dayjs from "dayjs";
+import "src/styles/content.css";
 
 export async function getStaticPaths() {
   const posts = await ghostClient.posts.browse({
