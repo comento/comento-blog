@@ -13,6 +13,7 @@
     "invalidate": "aws cloudfront create-invalidation --distribution-id E3L96CM7GX7I2G --paths \"/*\" > /dev/null"
   },
   "dependencies": {
+    "@astrojs/rss": "^3.0.0",
     "@astrojs/sitemap": "^3.0.0",
     "@astrojs/tailwind": "^5.0.0",
     "@tailwindcss/typography": "^0.5.9",
