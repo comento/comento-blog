@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 
 import { ghostClient } from "@lib/ghost";
 import Card from "@components/Card.astro";
+import { ViewTransitions } from "astro:transitions";
 
 const posts = await ghostClient.posts.browse({
   limit: "all",
@@ -30,6 +31,7 @@ posts.forEach((post) => {
       ))
     }
   </section>
+  <ViewTransitions />
 </Layout>
 
 <style>

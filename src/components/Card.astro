@@ -23,7 +23,7 @@ const postLink = `/post/${getPostSlug(post)}`;
       height="150"
       transition:name={`feature-image-${post.id}`}
     />
-    <div class="bg-white p-5 flex-grow">
+    <div class="bg-white p-5 flex-grow" transition:name={`tags-${post.id}`}>
       {
         post.primary_tag && (
           <div class="text-gray-500 text-[10px] font-semibold h-5">
@@ -31,7 +31,7 @@ const postLink = `/post/${getPostSlug(post)}`;
           </div>
         )
       }
-      <h2 class="font-bold line-clamp-2">
+      <h2 class="font-bold line-clamp-2" transition:name={`title-${post.id}`}>
         {post.title}
       </h2>
       <p

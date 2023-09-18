@@ -11,7 +11,7 @@ import "src/styles/content.css";
 export async function getStaticPaths() {
   const posts = await ghostClient.posts.browse({
     limit: "all",
-    include:["authors", "tags"],
+    include: ["authors", "tags"],
     fields:
       "id,title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt,primary_tag",
   });
@@ -78,7 +78,6 @@ export async function getStaticPaths() {
   return paths;
 }
 
-
 const { post, previousPost, nextPost } = Astro.props;
 ---
 
@@ -95,16 +94,22 @@ const { post, previousPost, nextPost } = Astro.props;
   </Fragment>
   <article
     class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px] max-w-3xl mx-auto"
-    transition:animate="initial"
   >
-    {
+    <div class="flex-grow" transition:name={`tags-${post.id}`}>
+      {
         post.primary_tag && (
           <p class="text-gray-500 text-[14px] font-semibold h-5 mb-3">
             {post.primary_tag.name.toUpperCase()}
           </p>
         )
-    }
-    <h1 class="text-3xl font-semibold mb-8">{post.title}</h1>
+      }
+    </div>
+    <h1
+      class="text-3xl font-semibold mb-8"
+      transition:name={`title-${post.id}`}
+    >
+      {post.title}
+    </h1>
     <div class="flex items-center gap-3">
       <p class="flex items-center text-gray-600 text-sm">
         <img
