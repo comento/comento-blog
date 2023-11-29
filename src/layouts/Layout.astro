@@ -34,9 +34,11 @@ const canonicalUrlHref = canonicalUrl.href.endsWith("/")
     <meta name="generator" content={Astro.generator} />
     <meta name="og:site_name" content="코멘토 개발팀 블로그" />
     <slot name="head" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-37S7B7384H"
-    ></script>
-    <script>
+    <script
+      type="text/partytown"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-37S7B7384H"></script>
+    <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
