@@ -14,14 +14,15 @@
   },
   "dependencies": {
     "@astrojs/partytown": "^2.0.2",
-    "@astrojs/rss": "^3.0.0",
-    "@astrojs/sitemap": "^3.0.0",
-    "@astrojs/tailwind": "^5.0.0",
+    "@astrojs/rss": "^4.0.1",
+    "@astrojs/sitemap": "^3.0.3",
+    "@astrojs/tailwind": "^5.0.3",
     "@tailwindcss/typography": "^0.5.9",
     "@tryghost/admin-api": "^1.13.7",
     "@tryghost/content-api": "^1.11.13",
-    "astro": "^3.0.3",
+    "astro": "^4.0.3",
     "dayjs": "^1.11.8",
+    "shiki": "^0.14.6",
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
