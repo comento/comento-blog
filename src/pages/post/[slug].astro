@@ -93,7 +93,7 @@ const { post, previousPost, nextPost } = Astro.props;
     <link rel="preload" as="image" href={post.feature_image} />
   </Fragment>
   <article
-    class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px] max-w-3xl mx-auto"
+    class="col-span-12 lg:col-span-8 lg:col-start-3 pt-10 lg:pt-[80px] mx-auto max-w-full lg:max-w-3xl"
   >
     <div class="flex-grow" transition:name={`tags-${post.id}`}>
       {
