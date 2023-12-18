@@ -1,2 +1,2 @@
 export const RECRUIT_URL =
-  "https://www.notion.so/comento/23adb41a65d34ca383d23f049f7b55b9";
+  "https://comento.notion.site/a6dee5a37a5448d0b7315a80a985ebf2";
