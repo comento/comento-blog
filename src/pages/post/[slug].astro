@@ -1,4 +1,5 @@
 ---
+import he from "he";
 import shiki from "shiki";
 import Layout from "@layouts/Layout.astro";
 import { ghostClient } from "@lib/ghost";
@@ -41,6 +42,7 @@ export async function getStaticPaths() {
 
     for await (const match of [...matches]) {
       const originalCode = match.groups.code;
+      const decodedCode = he.decode(originalCode);
       let lang = match.groups.lang.toLowerCase() as shiki.Lang;
       if (!originalCode || !lang) {
         return;
@@ -52,12 +54,9 @@ export async function getStaticPaths() {
         await highlighter.loadLanguage(lang);
       }
       const block = match.groups.block;
-      const replacedCode = originalCode
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">");
       post.html = post.html.replace(
         block,
-        highlighter.codeToHtml(replacedCode, { lang })
+        highlighter.codeToHtml(decodedCode, { lang })
       );
     }
 
@@ -186,3 +185,651 @@ const { post, previousPost, nextPost } = Astro.props;
     }
   </nav>
 </Layout>
+
+<!-- 영상을 위한 CSS와 JS -->
+<style is:global>
+  .kg-video-card video {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .kg-video-card,
+  .kg-video-card * {
+    box-sizing: border-box;
+  }
+
+  .kg-video-card {
+    position: relative;
+    --seek-before-width: 0%;
+    --volume-before-width: 100%;
+    --buffered-width: 0%;
+  }
+
+  .kg-video-card video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .kg-video-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .kg-video-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.3) 0,
+      transparent 70%,
+      transparent 100%
+    );
+    z-index: 999;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .kg-video-large-play-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 72px;
+    height: 72px;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .kg-video-large-play-icon svg {
+    width: 20px;
+    height: auto;
+    margin-left: 2px;
+    fill: #fff;
+  }
+
+  .kg-video-player-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+    z-index: 999;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .kg-video-player {
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    z-index: 9999;
+    padding: 12px 16px;
+  }
+
+  .kg-video-current-time {
+    min-width: 38px;
+    padding: 0 4px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85em;
+    font-weight: 500;
+    line-height: 1.4em;
+    white-space: nowrap;
+  }
+
+  .kg-video-time {
+    color: rgba(255, 255, 255, 0.6);
+    font-family: inherit;
+    font-size: 0.85em;
+    font-weight: 500;
+    line-height: 1.4em;
+    white-space: nowrap;
+  }
+
+  .kg-video-duration {
+    padding: 0 4px;
+  }
+
+  .kg-video-play-icon,
+  .kg-video-pause-icon {
+    position: relative;
+    padding: 0px 4px 0 0;
+    font-size: 0;
+    background: transparent;
+  }
+
+  .kg-video-hide {
+    display: none !important;
+  }
+
+  .kg-video-hide-animated {
+    opacity: 0 !important;
+    transition: opacity 0.2s ease-in-out;
+    cursor: initial;
+  }
+
+  .kg-video-play-icon svg,
+  .kg-video-pause-icon svg {
+    width: 14px;
+    height: 14px;
+    fill: #fff;
+  }
+
+  .kg-video-seek-slider {
+    flex-grow: 1;
+    margin: 0 4px;
+  }
+
+  @media (max-width: 520px) {
+    .kg-video-seek-slider {
+      display: none;
+    }
+  }
+
+  .kg-video-playback-rate {
+    min-width: 37px;
+    padding: 0 4px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85em;
+    font-weight: 600;
+    line-height: 1.4em;
+    text-align: left;
+    background: transparent;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 520px) {
+    .kg-video-playback-rate {
+      padding-left: 8px;
+    }
+  }
+
+  .kg-video-mute-icon,
+  .kg-video-unmute-icon {
+    position: relative;
+    bottom: -1px;
+    padding: 0 4px;
+    font-size: 0;
+    background: transparent;
+  }
+
+  @media (max-width: 520px) {
+    .kg-video-mute-icon,
+    .kg-video-unmute-icon {
+      margin-left: auto;
+    }
+  }
+
+  .kg-video-mute-icon svg,
+  .kg-video-unmute-icon svg {
+    width: 16px;
+    height: 16px;
+    fill: #fff;
+  }
+
+  .kg-video-volume-slider {
+    width: 80px;
+  }
+
+  @media (max-width: 300px) {
+    .kg-video-volume-slider {
+      display: none;
+    }
+  }
+
+  .kg-video-seek-slider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: var(--seek-before-width) !important;
+    height: 4px;
+    cursor: pointer;
+    background-color: #ebeef0;
+    border-radius: 2px;
+  }
+
+  .kg-video-volume-slider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: var(--volume-before-width) !important;
+    height: 4px;
+    cursor: pointer;
+    background-color: #ebeef0;
+    border-radius: 2px;
+  }
+
+  /* Resetting browser styles
+/* --------------------------------------------------------------- */
+
+  .kg-video-card input[type="range"] {
+    position: relative;
+    -webkit-appearance: none;
+    background: transparent;
+  }
+
+  .kg-video-card input[type="range"]:focus {
+    outline: none;
+  }
+
+  .kg-video-card input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+
+  .kg-video-card input[type="range"]::-ms-track {
+    cursor: pointer;
+    border-color: transparent;
+    color: transparent;
+    background: transparent;
+  }
+
+  .kg-video-card button {
+    display: flex;
+    align-items: center;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .kg-video-card input[type="range"] {
+    height: auto;
+    padding: 0;
+    border: 0;
+  }
+
+  /* Chrome & Safari styles
+/* --------------------------------------------------------------- */
+
+  .kg-video-card input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+
+  .kg-video-card input[type="range"]::-webkit-slider-thumb {
+    position: relative;
+    box-sizing: content-box;
+    width: 13px;
+    height: 13px;
+    margin: -5px 0 0 0;
+    border: 0;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.08),
+      0 1px 4px rgba(0, 0, 0, 0.24);
+  }
+
+  .kg-video-card input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(1.2);
+  }
+
+  /* Firefox styles
+/* --------------------------------------------------------------- */
+
+  .kg-video-card input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+
+  .kg-video-card input[type="range"]::-moz-range-progress {
+    background: #ebeef0;
+    border-radius: 2px;
+  }
+
+  .kg-video-card input[type="range"]::-moz-range-thumb {
+    box-sizing: content-box;
+    width: 13px;
+    height: 13px;
+    border: 0;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.08),
+      0 1px 4px rgba(0, 0, 0, 0.24);
+  }
+
+  .kg-video-card input[type="range"]:active::-moz-range-thumb {
+    transform: scale(1.2);
+  }
+
+  /* Edge & IE styles
+/* --------------------------------------------------------------- */
+
+  .kg-video-card input[type="range"]::-ms-track {
+    width: 100%;
+    height: 3px;
+    border: solid transparent;
+    color: transparent;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .kg-video-card input[type="range"]::-ms-fill-lower {
+    background: #fff;
+  }
+
+  .kg-video-card input[type="range"]::-ms-fill-upper {
+    background: #ebeef0;
+  }
+
+  .kg-video-card input[type="range"]::-ms-thumb {
+    box-sizing: content-box;
+    width: 13px;
+    height: 13px;
+    border: 0;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.08),
+      0 1px 4px rgba(0, 0, 0, 0.24);
+  }
+
+  .kg-video-card input[type="range"]:active::-ms-thumb {
+    transform: scale(1.2);
+  }
+</style>
+<script>
+  (function () {
+    const handleVideoPlayer = function (videoElementContainer) {
+      const videoPlayer =
+        videoElementContainer.querySelector(".kg-video-player");
+      const videoPlayerContainer = videoElementContainer.querySelector(
+        ".kg-video-player-container"
+      );
+      const playIconContainer = videoElementContainer.querySelector(
+        ".kg-video-play-icon"
+      );
+      const pauseIconContainer = videoElementContainer.querySelector(
+        ".kg-video-pause-icon"
+      );
+      const seekSlider = videoElementContainer.querySelector(
+        ".kg-video-seek-slider"
+      );
+      const playbackRateContainer = videoElementContainer.querySelector(
+        ".kg-video-playback-rate"
+      );
+      const muteIconContainer = videoElementContainer.querySelector(
+        ".kg-video-mute-icon"
+      );
+      const unmuteIconContainer = videoElementContainer.querySelector(
+        ".kg-video-unmute-icon"
+      );
+      const volumeSlider = videoElementContainer.querySelector(
+        ".kg-video-volume-slider"
+      );
+      const videoEl = videoElementContainer.querySelector("video");
+      const durationContainer =
+        videoElementContainer.querySelector(".kg-video-duration");
+      const currentTimeContainer = videoElementContainer.querySelector(
+        ".kg-video-current-time"
+      );
+      const largePlayIcon = videoElementContainer.querySelector(
+        ".kg-video-large-play-icon"
+      );
+      const videoOverlay =
+        videoElementContainer.querySelector(".kg-video-overlay");
+      let playbackRates = [
+        {
+          rate: 0.75,
+          label: "0.7×",
+        },
+        {
+          rate: 1.0,
+          label: "1×",
+        },
+        {
+          rate: 1.25,
+          label: "1.2×",
+        },
+        {
+          rate: 1.75,
+          label: "1.7×",
+        },
+        {
+          rate: 2.0,
+          label: "2×",
+        },
+      ];
+
+      let raf = null;
+      let currentPlaybackRateIdx = 1;
+      if (!!videoEl.loop) {
+        largePlayIcon.classList.add("kg-video-hide-animated");
+        videoOverlay.classList.add("kg-video-hide-animated");
+      }
+      const whilePlaying = () => {
+        seekSlider.value = Math.floor(videoEl.currentTime);
+        currentTimeContainer.textContent = calculateTime(seekSlider.value);
+        videoPlayer.style.setProperty(
+          "--seek-before-width",
+          `${(seekSlider.value / seekSlider.max) * 100}%`
+        );
+        raf = requestAnimationFrame(whilePlaying);
+      };
+
+      const showRangeProgress = (rangeInput) => {
+        if (rangeInput === seekSlider) {
+          videoPlayer.style.setProperty(
+            "--seek-before-width",
+            (rangeInput.value / rangeInput.max) * 100 + "%"
+          );
+        } else {
+          videoPlayer.style.setProperty(
+            "--volume-before-width",
+            (rangeInput.value / rangeInput.max) * 100 + "%"
+          );
+        }
+      };
+
+      const calculateTime = (secs) => {
+        const minutes = Math.floor(secs / 60);
+        const seconds = Math.floor(secs % 60);
+        const returnedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+        return `${minutes}:${returnedSeconds}`;
+      };
+
+      const displayDuration = () => {
+        durationContainer.textContent = calculateTime(videoEl.duration);
+      };
+
+      const setSliderMax = () => {
+        seekSlider.max = Math.floor(videoEl.duration);
+      };
+
+      const displayBufferedAmount = () => {
+        if (videoEl.buffered.length > 0) {
+          const bufferedAmount = Math.floor(
+            videoEl.buffered.end(videoEl.buffered.length - 1)
+          );
+          videoPlayer.style.setProperty(
+            "--buffered-width",
+            `${(bufferedAmount / seekSlider.max) * 100}%`
+          );
+        }
+      };
+
+      if (videoEl.readyState > 0) {
+        displayDuration();
+        setSliderMax();
+        displayBufferedAmount();
+        if (videoEl.autoplay) {
+          raf = requestAnimationFrame(whilePlaying);
+          playIconContainer.classList.add("kg-video-hide");
+          pauseIconContainer.classList.remove("kg-video-hide");
+        }
+        if (videoEl.muted) {
+          unmuteIconContainer.classList.add("kg-video-hide");
+          muteIconContainer.classList.remove("kg-video-hide");
+        }
+      } else {
+        videoEl.addEventListener("loadedmetadata", () => {
+          displayDuration();
+          setSliderMax();
+          displayBufferedAmount();
+          if (videoEl.autoplay) {
+            raf = requestAnimationFrame(whilePlaying);
+            playIconContainer.classList.add("kg-video-hide");
+            pauseIconContainer.classList.remove("kg-video-hide");
+          }
+          if (videoEl.muted) {
+            unmuteIconContainer.classList.add("kg-video-hide");
+            muteIconContainer.classList.remove("kg-video-hide");
+          }
+        });
+      }
+
+      videoElementContainer.onmouseover = () => {
+        if (!videoEl.loop) {
+          videoPlayerContainer.classList.remove("kg-video-hide-animated");
+        }
+      };
+
+      videoElementContainer.onmouseleave = () => {
+        const isPlaying = !!(
+          videoEl.currentTime > 0 &&
+          !videoEl.paused &&
+          !videoEl.ended &&
+          videoEl.readyState > 2
+        );
+        if (isPlaying) {
+          videoPlayerContainer.classList.add("kg-video-hide-animated");
+        }
+      };
+
+      videoElementContainer.addEventListener("click", () => {
+        if (!videoEl.loop) {
+          const isPlaying = !!(
+            videoEl.currentTime > 0 &&
+            !videoEl.paused &&
+            !videoEl.ended &&
+            videoEl.readyState > 2
+          );
+          if (isPlaying) {
+            handleOnPause();
+          } else {
+            handleOnPlay();
+          }
+        }
+      });
+
+      videoEl.onplay = () => {
+        largePlayIcon.classList.add("kg-video-hide-animated");
+        videoOverlay.classList.add("kg-video-hide-animated");
+        playIconContainer.classList.add("kg-video-hide");
+        pauseIconContainer.classList.remove("kg-video-hide");
+      };
+
+      const handleOnPlay = () => {
+        largePlayIcon.classList.add("kg-video-hide-animated");
+        videoOverlay.classList.add("kg-video-hide-animated");
+        playIconContainer.classList.add("kg-video-hide");
+        pauseIconContainer.classList.remove("kg-video-hide");
+        videoEl.play();
+        raf = requestAnimationFrame(whilePlaying);
+      };
+
+      const handleOnPause = () => {
+        pauseIconContainer.classList.add("kg-video-hide");
+        playIconContainer.classList.remove("kg-video-hide");
+        videoEl.pause();
+        cancelAnimationFrame(raf);
+      };
+
+      largePlayIcon.addEventListener("click", (event) => {
+        event.stopPropagation();
+        handleOnPlay();
+      });
+
+      playIconContainer.addEventListener("click", (event) => {
+        event.stopPropagation();
+        handleOnPlay();
+      });
+
+      pauseIconContainer.addEventListener("click", (event) => {
+        event.stopPropagation();
+        handleOnPause();
+      });
+
+      muteIconContainer.addEventListener("click", (event) => {
+        event.stopPropagation();
+        muteIconContainer.classList.add("kg-video-hide");
+        unmuteIconContainer.classList.remove("kg-video-hide");
+        videoEl.muted = false;
+      });
+
+      unmuteIconContainer.addEventListener("click", (event) => {
+        event.stopPropagation();
+        unmuteIconContainer.classList.add("kg-video-hide");
+        muteIconContainer.classList.remove("kg-video-hide");
+        videoEl.muted = true;
+      });
+
+      playbackRateContainer.addEventListener("click", (event) => {
+        event.stopPropagation();
+        let nextPlaybackRate = playbackRates[(currentPlaybackRateIdx + 1) % 5];
+        currentPlaybackRateIdx = currentPlaybackRateIdx + 1;
+        videoEl.playbackRate = nextPlaybackRate.rate;
+        playbackRateContainer.textContent = nextPlaybackRate.label;
+      });
+
+      videoEl.addEventListener("progress", displayBufferedAmount);
+
+      seekSlider.addEventListener("input", (e) => {
+        e.stopPropagation();
+        showRangeProgress(e.target);
+        currentTimeContainer.textContent = calculateTime(seekSlider.value);
+        if (!videoEl.paused) {
+          cancelAnimationFrame(raf);
+        }
+      });
+
+      seekSlider.addEventListener("change", (event) => {
+        event.stopPropagation();
+        videoEl.currentTime = seekSlider.value;
+        if (!videoEl.paused) {
+          requestAnimationFrame(whilePlaying);
+        }
+      });
+
+      volumeSlider.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+
+      seekSlider.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+
+      volumeSlider.addEventListener("input", (e) => {
+        e.stopPropagation();
+        const value = e.target.value;
+        showRangeProgress(e.target);
+        videoEl.volume = value / 100;
+      });
+    };
+
+    const videoCardElements = document.querySelectorAll(".kg-video-card");
+
+    for (let i = 0; i < videoCardElements.length; i++) {
+      handleVideoPlayer(videoCardElements[i]);
+    }
+  })();
+</script>
