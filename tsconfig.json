@@ -1,13 +1,22 @@
 {
   "extends": "astro/tsconfigs/base",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "/Users/luigee/Documents/comento/comento-blog",
     "paths": {
-      "@components/*": ["src/components/*"],
-      "@layouts/*": ["src/layouts/*"],
-      "@lib/*": ["src/lib/*"],
-      "@icons/*": ["src/icons/*"]
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@layouts/*": [
+        "src/layouts/*"
+      ],
+      "@lib/*": [
+        "src/lib/*"
+      ],
+      "@icons/*": [
+        "src/icons/*"
+      ]
     },
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "jsx": "preserve"
   }
 }
