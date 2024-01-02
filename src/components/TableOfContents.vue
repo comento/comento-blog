@@ -23,7 +23,7 @@ const headingsByLevel = computed(() => {
     h3?: Heading;
   } = {};
 
-  props.headings.reduce((prev, curr) => {
+  props.headings.forEach((curr) => {
     curr.children = [];
 
     if (curr.level === 2) {
@@ -33,9 +33,7 @@ const headingsByLevel = computed(() => {
       current.h2.children.push(curr);
       current.h3 = curr;
     }
-
-    return prev;
-  }, {});
+  });
 
   return topLevel;
 });
