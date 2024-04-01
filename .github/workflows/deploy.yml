@@ -14,13 +14,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Install modules
-        run: yarn install
       - name: Set Env
         run:
           CONTENT_API_KEY=${{ secrets.CONTENT_API_KEY }}
           ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}
           npm config set //npm.pkg.github.com/:_authToken ${{ secrets.PRIVATE_REGISTRY_TOKEN }}
+      - name: Install modules
+        run: yarn install
       - name: Build application
         run: yarn build
       - name: Deploy to S3
