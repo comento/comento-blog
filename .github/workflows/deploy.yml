@@ -21,8 +21,8 @@ jobs:
       - name: Build application
         run: yarn build
         env:
-          CONTENT_API_KEY=${{ secrets.CONTENT_API_KEY }}
-          ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}
+          CONTENT_API_KEY: ${{ secrets.CONTENT_API_KEY }}
+          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
       - name: Deploy to S3
         run: aws s3 sync ./dist/ s3://${{ secrets.BUCKET_ID }}
       - name: Create CloudFront invalidation
