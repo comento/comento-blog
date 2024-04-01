@@ -24,10 +24,10 @@ posts.forEach((post) => {
       content="코멘토를 만들어가는 개발자들의 일상, 생각, 고민이 담긴 블로그입니다. 업무 중 만난 다양한 일의 기록이 남아있습니다."
     />
   </Fragment>
-  <section class="col-span-12 grid grid-cols-12 gap-6 py-[40px] lg:py-[80px]">
+  <section class="col-span-12 grid grid-cols-12 gap-24 py-[40px] pc:py-[80px]">
     {
       posts.map((post) => (
-        <Card class="col-span-12 lg:col-span-3" post={post} />
+        <Card class="col-span-12 pc:col-span-3" post={post} />
       ))
     }
   </section>

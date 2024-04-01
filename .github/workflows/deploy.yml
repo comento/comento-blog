@@ -16,8 +16,13 @@ jobs:
           aws-region: us-east-1
       - name: Install modules
         run: yarn install
+      - name: Set Env
+        run:
+          CONTENT_API_KEY=${{ secrets.CONTENT_API_KEY }}
+          ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}
+          npm config set //npm.pkg.github.com/:_authToken ${{ secrets.PRIVATE_REGISTRY_TOKEN }}
       - name: Build application
-        run: CONTENT_API_KEY=${{ secrets.CONTENT_API_KEY }} ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }} yarn build
+        run: yarn build
       - name: Deploy to S3
         run: aws s3 sync ./dist/ s3://${{ secrets.BUCKET_ID }}
       - name: Create CloudFront invalidation

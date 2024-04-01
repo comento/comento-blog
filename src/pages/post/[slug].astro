@@ -104,25 +104,25 @@ const headingTexts = Array.from(headings).map((h) => ({
     <link rel="preload" as="image" href={post.feature_image} />
   </Fragment>
   <article
-    class="col-span-12 lg:col-span-8 lg:col-start-2 pt-10 lg:pt-[80px] mx-auto max-w-full lg:max-w-3xl"
+    class="col-span-12 pc:col-span-8 pc:col-start-2 pt-10 pc:pt-[80px] mx-auto max-w-full pc:max-w-3xl"
   >
     <div class="flex-grow" transition:name={`tags-${post.id}`}>
       {
         post.primary_tag && (
-          <p class="text-gray-500 text-[14px] font-semibold h-5 mb-3">
+          <p class="text-gray-500 text-[14px] font-semi-bold h-20 mb-12">
             {post.primary_tag.name.toUpperCase()}
           </p>
         )
       }
     </div>
     <h1
-      class="text-3xl font-semibold mb-8"
+      class="text-headline1 font-semi-bold mb-32 break-keep"
       transition:name={`title-${post.id}`}
     >
       {post.title}
     </h1>
-    <div class="flex items-center gap-3">
-      <p class="flex items-center text-gray-600 text-sm">
+    <div class="flex items-center gap-12">
+      <p class="flex items-center text-gray-600 text-body2">
         <img
           src={post.primary_author.profile_image}
           width="52"
@@ -133,7 +133,7 @@ const headingTexts = Array.from(headings).map((h) => ({
       </p>
       <div>
         <strong>{post.primary_author.name}</strong>
-        <div class="flex items-center text-gray-400 text-sm gap-1">
+        <div class="flex items-center text-gray-400 text-body2 gap-8">
           <p>{post.published_at}</p>
           <p>•</p>
           <p>
@@ -151,7 +151,7 @@ const headingTexts = Array.from(headings).map((h) => ({
       transition:name={`feature-image-${post.id}`}
     />
     <article
-      class="prose lg:prose-lg mt-16"
+      class="prose pc:prose-lg mt-16"
       transition:name={`content-${post.id}`}
     >
       <Fragment set:html={post.html} />
@@ -168,7 +168,7 @@ const headingTexts = Array.from(headings).map((h) => ({
         <div class="flex justify-center">
           <a href={RECRUIT_URL} target="_blank">
             <button
-              class="border py-2 px-4 rounded-lg text-base border-primary text-primary hover:bg-primary hover:text-white"
+              class="border py-8 px-16 rounded-lg text-body1 border-primary text-primary hover:bg-primary hover:text-white"
               >채용 공고 확인하기</button
             >
           </a>
@@ -176,15 +176,15 @@ const headingTexts = Array.from(headings).map((h) => ({
       </div>
     </article>
   </article>
-  <nav class="hidden lg:block lg:col-span-3 pt-10 lg:pt-[80px]">
+  <nav class="hidden pc:block pc:col-span-3 pt-10 pc:pt-[80px]">
     <TableOfContents
       client:load
-      class:list={["sticky", "top-24", "ml-4"]}
+      class:list={["sticky", "top-24", "ml-16"]}
       headings={headingTexts}
     />
   </nav>
   <nav
-    class="flex flex-col gap-4 md:flex-row justify-between col-span-12 lg:col-span-8 lg:col-start-2 mt-4 mb-10 lg:mb-[80px]"
+    class="flex flex-col gap-16 md:flex-row justify-between col-span-12 pc:col-span-8 pc:col-start-2 mt-4 mb-40 pc:mb-80"
   >
     {
       previousPost ? (

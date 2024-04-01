@@ -3,14 +3,15 @@ import Icon from "@components/Icon.astro";
 import { RECRUIT_URL } from "src/constants";
 
 const { pathname } = Astro.url;
+const isBlogPath = pathname === "/" || pathname.startsWith("/post");
 ---
 
 <header
-  class="border-b h-[52px] sm:h-[68px] box-content bg-white px-4 sticky top-0 z-50"
+  class="border-b h-[52px] pc:h-[69px] box-content bg-white px-4 sticky top-0 z-50"
   transition:persist
 >
-  <div class="gap-6 lg:w-[1140px] m-auto h-full">
-    <div class="flex items-center gap-6 h-full">
+  <div class="gap-24 pc:w-[1140px] m-auto h-full">
+    <div class="flex items-center gap-24 h-full">
       <a href="/" aria-label="코멘토 개발팀 블로그 홈으로 가기">
         <img
           class="max-w-none"
@@ -20,20 +21,20 @@ const { pathname } = Astro.url;
           alt="코멘토 로고"
         />
       </a>
-      <ul class="flex items-center h-full gap-6">
+      <ul class="flex items-center h-full gap-24">
         <li
-          class="text-sm hover:text-blue-600 flex-shrink-0"
+          class="text-body2 hover:text-blue-600 shrink-0"
           class:list={[
             {
-              "text-blue-600": pathname === "/",
-              "text-gray-800": pathname !== "/",
+              "text-blue-600 font-semi-bold": isBlogPath,
+              "text-gray-800": !isBlogPath,
             },
           ]}
         >
           <a href="/">블로그</a>
         </li>
-        <li class="text-sm text-gray-800 hover:text-blue-600 flex-shrink-0">
-          <a class="flex gap-1" href={RECRUIT_URL} target="_blank">
+        <li class="text-body2 text-gray-800 hover:text-blue-600 shrink-0">
+          <a class="flex gap-4" href={RECRUIT_URL} target="_blank">
             채용
             <Icon name="arrow-top-right-on-square" />
           </a>

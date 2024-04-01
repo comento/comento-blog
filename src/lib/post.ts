@@ -1,4 +1,4 @@
-import { PostOrPage } from "@tryghost/content-api";
+import type { PostOrPage } from "@tryghost/content-api";
 import dayjs from "dayjs";
 
 export function getPostSlug(post: PostOrPage) {

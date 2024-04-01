@@ -13,12 +13,12 @@ const href = `/post/${getPostSlug(post)}`;
   data-astro-reload
 >
   <div class="flex flex-col">
-    <div class="flex gap-1 items-center">
+    <div class="flex gap-4 items-center">
       {direction === "right" && "다음 글"}
       <Icon name={`arrow-${direction}`} />
       {direction === "left" && "이전 글"}
     </div>
-    <span class="mt-3 block break-keep text-base font-semibold">
+    <span class="mt-3 block break-keep text-body1 font-semi-bold">
       {title}
     </span>
   </div>

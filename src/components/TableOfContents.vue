@@ -69,7 +69,7 @@ onMounted(() => {
     <li
       v-for="{ id, title, children } in headingsByLevel"
       :key="id"
-      class="text-gray-400 mb-2.5"
+      class="text-gray-400 mb-10"
     >
       <a :href="`#${id}`" :class="{ active: activeHeading.level2 === id }">
         {{ title }}
@@ -78,7 +78,7 @@ onMounted(() => {
         <li v-for="child in children">
           <a
             :href="`#${child.id}`"
-            class="text-sm ml-5"
+            class="text-body2 ml-5"
             :class="{ active: activeHeading.level3 === child.id }"
           >
             {{ child.title }}

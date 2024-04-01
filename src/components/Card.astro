@@ -1,6 +1,6 @@
 ---
 import { getPostSlug } from "@lib/post";
-import { PostOrPage } from "@tryghost/content-api";
+import type { PostOrPage } from "@tryghost/content-api";
 type Props = {
   post: PostOrPage;
   class: string;
@@ -11,38 +11,38 @@ const postLink = `/post/${getPostSlug(post)}`;
 ---
 
 <article
-  class="rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow"
+  class="rounded-lg overflow-hidden shadow-1 hover:shadow-2 transition-shadow"
   class:list={className}
 >
   <a class="flex flex-col h-full" href={postLink}>
     <img
-      class="aspect-video w-full"
+      class="aspect-video w-full border-b border-b-gray-200"
       src={post.feature_image}
       alt={post.title}
       width="267"
       height="150"
       transition:name={`feature-image-${post.id}`}
     />
-    <div class="bg-white p-5 flex-grow" transition:name={`tags-${post.id}`}>
+    <div class="bg-white p-20 flex-grow" transition:name={`tags-${post.id}`}>
       {
         post.primary_tag && (
-          <div class="text-gray-500 text-sm font-semibold h-5 mb-1">
+          <div class="text-gray-500 text-body2 font-semi-bold h-20 mb-4">
             {post.primary_tag.name.toUpperCase()}
           </div>
         )
       }
-      <h2 class="font-bold line-clamp-2" transition:name={`title-${post.id}`}>
+      <h2 class="font-semi-bold line-clamp-2" transition:name={`title-${post.id}`}>
         {post.title}
       </h2>
       <p
-        class="mt-1 text-ellipsis text-sm text-gray-600 line-clamp-4"
+        class="mt-4 text-ellipsis text-body2 text-gray-600 line-clamp-4"
         transition:name={`content-${post.id}`}
       >
         {post.excerpt}
       </p>
     </div>
     <footer
-      class="bg-white px-5 text-xs font-semibold h-10 flex items-center border-t border-t-slate-100"
+      class="bg-white px-20 text-caption1 font-semi-bold h-40 flex items-center border-t border-t-slate-100"
     >
       더 읽기
     </footer>
