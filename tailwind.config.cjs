@@ -16,24 +16,8 @@ module.exports = {
         DEFAULT: {
           css: {
             maxWidth: '100ch',
-            '--tw-prose-code': '#E92525',
-            code: {
-              fontWeight: 400,
-              background: 'rgba(135,131,120,.15)',
-              borderRadius: '0.25rem',
-              padding: '0.2em 0.4em',
-              '&::before': {
-                content: '"" !important',
-              },
-              '&::after': {
-                content: '"" !important',
-              },
-            }
           },
         }
-      },
-      colors: {
-        primary: "#2a7de1",
       },
     },
   },
