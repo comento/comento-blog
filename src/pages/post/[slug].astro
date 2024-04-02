@@ -152,7 +152,7 @@ const headingTexts = Array.from(headings).map((h) => ({
       transition:name={`feature-image-${post.id}`}
     />
     <article
-      class="mt-16 prose prose-code:text-[#E92525] prose-code:font-regular prose-code:bg-[rgba(135,131,120,.15)] prose-code:rounded-[0.25rem] prose-code:px-[0.4em] prose-code:py-[0.2em] prose-code:before:content-none prose-code:after:content-none pc:prose-lg"
+      class="mt-16 [&>pre>code]:bg-transparent prose prose-code:text-[#E92525] prose-code:font-regular prose-code:bg-[rgba(135,131,120,.15)] prose-code:rounded-[0.25rem] prose-code:px-[0.4em] prose-code:py-[0.2em] prose-code:before:content-none prose-code:after:content-none pc:prose-lg"
       transition:name={`content-${post.id}`}
     >
       <Fragment set:html={post.html} />
