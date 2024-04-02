@@ -10,6 +10,7 @@ import PostLink from "@components/PostLink.astro";
 import dayjs from "dayjs";
 import "src/styles/content.css";
 import TableOfContents from "@components/TableOfContents.vue";
+import Comments from "@components/Comments.astro";
 
 export async function getStaticPaths() {
   const posts = await ghostClient.posts.browse({
@@ -183,6 +184,7 @@ const headingTexts = Array.from(headings).map((h) => ({
       headings={headingTexts}
     />
   </nav>
+  <Comments />
   <nav
     class="flex flex-col gap-16 md:flex-row justify-between col-span-12 pc:col-span-8 pc:col-start-2 mt-4 mb-40 pc:mb-80"
   >
