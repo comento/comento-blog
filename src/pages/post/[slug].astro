@@ -580,6 +580,26 @@ const headingTexts = Array.from(headings).map((h) => ({
     visibility: hidden;
   }
 </style>
+
+<!-- Ghost CSS -->
+<style is:global>
+  /* Ghost Callout */
+  .kg-callout-card {
+    display: flex;
+    padding: 20px 28px;
+    background-color: #f9f9f9;
+    border-radius: 3px;
+  }
+
+  .kg-callout-emoji {
+    margin-right: 8px;
+    margin-left: -8px;
+    padding: 0 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+</style> 
+
 <script>
   (function () {
     const handleVideoPlayer = function (videoElementContainer) {
