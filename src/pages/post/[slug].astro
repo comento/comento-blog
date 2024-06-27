@@ -129,7 +129,7 @@ const headingTexts = Array.from(headings).map((h) => ({
           width="52"
           height="52"
           alt={`${post.primary_author.name} 프로필 이미지`}
-          class="rounded-full"
+          class="rounded-full w-52 h-52 object-cover"
         />
       </p>
       <div>
@@ -588,7 +588,10 @@ const headingTexts = Array.from(headings).map((h) => ({
     display: flex;
     padding: 20px 28px;
     background-color: #f9f9f9;
-    border-radius: 3px;
+    border-radius: 4px;
+  }
+  .kg-callout-card + .kg-callout-card {
+    margin-top: 8px;
   }
 
   .kg-callout-emoji {
@@ -598,7 +601,7 @@ const headingTexts = Array.from(headings).map((h) => ({
     border-radius: 3px;
     flex-shrink: 0;
   }
-</style> 
+</style>
 
 <script>
   (function () {
