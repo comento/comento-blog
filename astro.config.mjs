@@ -8,10 +8,6 @@ import vue from "@astrojs/vue";
 // https://astro.build/config
 export default defineConfig({
   site: "https://developer.comento.kr",
-  integrations: [tailwind(), sitemap(), partytown({
-    config: {
-      forward: ["dataLayer.push"]
-    }
-  }), vue()],
+  integrations: [tailwind(), sitemap(), vue()],
   trailingSlash: "never"
 });
