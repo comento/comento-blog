@@ -39,11 +39,11 @@ export async function getStaticPaths() {
   const paths = [];
 
   for await (const post of posts) {
-    const matches = post.html.matchAll(
+    const codeBlockMatches = post.html.matchAll(
       /(?<block><pre><code class="language-(?<lang>.+?)">(?<code>[\s\S]*?)<\/code><\/pre>)/g,
     );
 
-    for await (const match of [...matches]) {
+    for await (const match of [...codeBlockMatches]) {
       const originalCode = match.groups.code;
       const decodedCode = he.decode(originalCode);
       let lang = match.groups.lang.toLowerCase() as unknown as BundledLanguage;
@@ -70,6 +70,11 @@ export async function getStaticPaths() {
     }
 
     post.published_at = dayjs(post.published_at).format("YYYY.MM.DD");
+
+    const refMatches = post.html.matchAll(/\?ref=blog.comento.info/g);
+    for (const match of [...refMatches]) {
+      post.html = post.html.replace(match[0], `?ref=developer.comento.kr`);
+    }
 
     paths.push({
       params: {
