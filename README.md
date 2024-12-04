@@ -1,10 +1,10 @@
 # 코멘토 개발팀 블로그
 
-마지막 수정일자: 2023-08-31
+마지막 수정일자: 2024-12-04
 
 ## 요구 환경
 
-NodeJS 18.17.1 (.tool-versions를 참고하세요. asdf 사용 권장)
+NodeJS 22.11.0 (.tool-versions를 참고하세요. asdf 사용 권장)
 
 ## 구조 설명
 
@@ -16,13 +16,13 @@ Ghost의 컨텐츠를 가져와서 사용합니다.
 
 SSG 방식이기 때문에 컨텐츠의 추가, 수정, 삭제를 반영하려면 배포를 새로 해주어야 합니다.
 
-## yarn(npm) 명령어 사용 방법
+## pnpm 명령어 사용 방법
 
 ```sh
-yarn dev # 로컬 개발 서버 작동
-yarn build # 빌드
-yarn preview # 빌드 상태에서 확인
-yarn deploy # 빌드 후 배포
+pnpm dev # 로컬 개발 서버 작동
+pnpm build # 빌드
+pnpm preview # 빌드 상태에서 확인
+pnpm deploy # 빌드 후 배포
 ```
 
 ## 사용한 기술 출처
