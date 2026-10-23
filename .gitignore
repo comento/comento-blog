@@ -19,3 +19,6 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# 글 원본 (s3://developer.comento.kr/_source/ 에서 pnpm fetch:posts 로 받음)
+src/content/posts/

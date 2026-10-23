@@ -1,14 +1,9 @@
 import rss from "@astrojs/rss";
-import { ghostClient } from "@lib/ghost";
+import { getPosts } from "@lib/posts";
 import { getPostSlug } from "@lib/post";
 
 export async function GET(context) {
-  const posts = await ghostClient.posts.browse({
-    limit: "all",
-    include: ["authors", "tags"],
-    fields:
-      "id,title,reading_time,feature_image,title,html,slug,primary_author,published_at,excerpt,primary_tag",
-  });
+  const posts = getPosts();
   return rss({
     // `<title>` field in output xml
     title: "블로그 | 코멘토 개발팀",

@@ -2,15 +2,11 @@
 import Layout from "../layouts/Layout.astro";
 import dayjs from "dayjs";
 
-import { ghostClient } from "@lib/ghost";
+import { getPosts } from "@lib/posts";
 import Card from "@components/Card.astro";
 import { ViewTransitions } from "astro:transitions";
 
-const posts = await ghostClient.posts.browse({
-  limit: "all",
-  include: "tags",
-  fields: "id, title, feature_image, excerpt, published_at, slug, primary_tag",
-});
+const posts = getPosts();
 
 posts.forEach((post) => {
   post.published_at = dayjs(post.published_at).format("YYYY-MM-DD");

@@ -2,6 +2,10 @@ name: Deploy Website
 
 on: workflow_dispatch
 
+permissions:
+  id-token: write # GitHub OIDC → AWS 역할 (정적 키 없음)
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,11 +25,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::744549229387:role/comento/oidc-github-comento-blog-prod
+          aws-region: ap-northeast-2
 
       - name: Set Env
         run: npm config set //npm.pkg.github.com/:_authToken ${{ secrets.PRIVATE_REGISTRY_TOKEN }}
@@ -33,14 +36,14 @@ jobs:
       - name: Install modules
         run: pnpm install
 
+      - name: Fetch posts (s3 _source)
+        run: pnpm fetch:posts
+
       - name: Build application
         run: pnpm build
-        env:
-          CONTENT_API_KEY: ${{ secrets.CONTENT_API_KEY }}
-          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
 
       - name: Deploy to S3
-        run: aws s3 sync ./dist/ s3://${{ secrets.BUCKET_ID }}
+        run: aws s3 sync ./dist/ s3://${{ secrets.BUCKET_ID }} --exclude "_source/*"
 
       - name: Create CloudFront invalidation
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.DISTRIBUTION_ID }} --paths "/*"
