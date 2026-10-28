@@ -57,6 +57,16 @@ export class Renderer {
     return `${CDN}/${key}`;
   }
 
+  /** 만든 이미지(Buffer)를 publish-out/images/<key> 에 두고 CDN 주소를 돌려준다. */
+  saveBuffer(buf, stem, ext = "png") {
+    const key = `${this.assetDir}/${this.pageKey}-${stem}.${ext}`;
+    const file = path.join(OUT_DIR, "images", key);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, buf);
+    this.assets.push({ key, bytes: buf.length });
+    return `${CDN}/${key}`;
+  }
+
   rich(rt = []) {
     return rt
       .map((t) => {

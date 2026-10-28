@@ -1,0 +1,25 @@
+{
+ "_source": "AWS Architecture Icons 2026-07-31 (Architecture-Service-Icons, 64px) — 원본 그대로 사용, 변형 금지",
+ "icons": {
+  "Amazon Bedrock AgentCore": "aws-amazon-bedrock-agentcore.svg",
+  "Amazon Bedrock": "aws-amazon-bedrock.svg",
+  "AWS Lambda": "aws-aws-lambda.svg",
+  "Amazon ECS": "aws-amazon-elastic-container-service.svg",
+  "Amazon S3": "aws-amazon-simple-storage-service.svg",
+  "Amazon CloudFront": "aws-amazon-cloudfront.svg",
+  "Amazon EventBridge": "aws-amazon-eventbridge.svg",
+  "Amazon DynamoDB": "aws-amazon-dynamodb.svg",
+  "Amazon RDS": "aws-amazon-rds.svg",
+  "Amazon Aurora": "aws-amazon-aurora.svg",
+  "Amazon SQS": "aws-amazon-simple-queue-service.svg",
+  "Amazon API Gateway": "aws-amazon-api-gateway.svg",
+  "AWS Step Functions": "aws-aws-step-functions.svg",
+  "Amazon ElastiCache": "aws-amazon-elasticache.svg",
+  "Amazon CloudWatch": "aws-amazon-cloudwatch.svg",
+  "AWS WAF": "aws-aws-waf.svg",
+  "Amazon Route 53": "aws-amazon-route-53.svg",
+  "Amazon EC2": "aws-amazon-ec2.svg",
+  "AWS Fargate": "aws-aws-fargate.svg",
+  "Amazon SageMaker AI": "aws-amazon-sagemaker-ai.svg"
+ }
+}

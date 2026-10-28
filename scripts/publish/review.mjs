@@ -66,6 +66,16 @@ const Suggestion = z.object({
   slug: z.string().describe("영어 소문자·숫자·하이픈만, 3~60자. 글 주제를 나타내는 짧은 주소"),
   excerpt: z.string().describe("목록 카드에 보일 1~2문장 한국어 요약, 160자 이내"),
   tag: z.string().describe("대표 태그 하나. 기존 태그 목록에 맞는 것이 있으면 그대로, 없으면 짧은 영문 대문자"),
+  cover_keyword: z
+    .string()
+    .describe("커버에 글자로 크게 넣을 주제명. 글의 핵심 기술·제품·개념 이름 그대로, 최대 3단어 (예: 'Bedrock AgentCore', 'Day.js', '코드 리뷰 문화')"),
+  cover_icon: z.string().describe("아이콘 목록에서 글의 주제와 정확히 맞는 이름 하나를 그대로. 맞는 것이 없으면 빈 문자열"),
+  cover_scene: z
+    .string()
+    .describe(
+      "커버 일러스트 장면 (영어, 1~2문장, 40단어 이내). 주인공을 비유 없이, 가장 중요한 것부터, 등장 요소는 3개 이하. " +
+        "글자·숫자·로고는 넣지 않음. 화풍·색·구도는 쓰지 않음(따로 고정)",
+    ),
   issues: z
     .array(
       z.object({
@@ -82,10 +92,18 @@ const SYSTEM = `당신은 코멘토 개발팀 기술 블로그의 발행 전 검
 - 맞춤법·문장: 분명한 오탈자, 비문만. 문체나 취향은 지적하지 않습니다.
 - 노출 의심: 비밀번호·키·토큰, 사내 전용 주소나 내부 시스템 상세, 작성자가 아닌 사람의 개인정보, 공개되지 않은 사업 수치처럼
   공개 블로그에 나가면 곤란할 수 있는 내용. 확실하지 않으므로 '의심'으로만 표시합니다.
-- slug·요약·태그는 독자 관점에서 제안합니다.`;
+- slug·요약·태그는 독자 관점에서 제안합니다.
+- cover_keyword·cover_scene 은 목록 카드의 대표 그림입니다. 독자가 카드를 보고 "무엇에 관한 글인지" 바로 알아야 합니다.
+  · cover_keyword: 글의 핵심 기술·제품·개념 이름을 그대로(이름이 있으면 이름을, 문화·회고 글이면 주제를).
+  · cover_scene: 본문을 끝까지 읽고 글의 주인공들을 비유 없이 그대로 그립니다 — 어떤 사람(역할)이, 어떤 시스템·도구와,
+    무엇을 하고 있는지. 여러 요소가 함께 일하는 구조라면 각 요소가 서로 다른 모습(역할 아이콘을 든 작은 캐릭터 등)으로
+    구분되게. 추상적 비유(병, 열쇠, 퍼즐)나 흔한 상징(로봇 한 대, 확성기, 전구)으로 대신하지 않습니다.
+    이미지 모델은 긴 장면을 단순화해 버리므로(실측) 짧게 쓰고, 가장 중요한 주인공을 문장 맨 앞에 둡니다.
+    예: 캐시 도입기라면 "A small fast storage shelf catching API request arrows in front of a big slow database cabinet,
+    with a backend developer watching from a laptop."`;
 
 /** AI 제안. 실패하거나 거절되면 null — 발행을 막지 않는다. */
-export async function aiReview({ title, html, tags }) {
+export async function aiReview({ title, html, tags, icons = [] }) {
   const text = htmlToText(html);
   if (text.length > 150000) return { skipped: `본문이 길어(${text.length}자) AI 점검을 건너뛰었습니다.` };
   const client = new AnthropicBedrock({ awsRegion: process.env.AWS_REGION || "ap-northeast-2" });
@@ -98,7 +116,7 @@ export async function aiReview({ title, html, tags }) {
       messages: [
         {
           role: "user",
-          content: `기존 태그 목록: ${tags.join(", ") || "(없음)"}\n\n<title>${title}</title>\n<body>\n${text}\n</body>`,
+          content: `기존 태그 목록: ${tags.join(", ") || "(없음)"}\n커버 아이콘 목록: ${icons.join(", ") || "(없음)"}\n\n<title>${title}</title>\n<body>\n${text}\n</body>`,
         },
       ],
     });

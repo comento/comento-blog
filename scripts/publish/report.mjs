@@ -19,6 +19,8 @@ function aiSection() {
   if (!r.isUpdate) lines.push(`· 주소: ${r.urlSlug}`);
   if (r.excerptSource === "AI") lines.push(`· 요약(노션 요약 칸이 비어 AI 요약을 썼습니다): ${s.excerpt}`);
   lines.push(`· 태그 제안: ${s.tag}`);
+  if (r.coverSource === "AI") lines.push(`· 커버: 노션 커버가 없어 AI 로 그렸습니다. 마음에 들지 않으면 노션에 커버를 넣고 다시 '게시'하세요.\n  그린 장면: ${r.coverScene}`);
+  if (r.coverSource === "본문 첫 이미지") lines.push("· 커버: 노션 커버가 없어 본문 첫 이미지를 썼습니다.");
   if (s.issues.length) {
     lines.push(`· 짚을 부분 ${s.issues.length}개:`);
     for (const i of s.issues.slice(0, 20)) lines.push(`  - [${i.kind}] "${i.quote}" → ${i.suggestion}`);
