@@ -84,7 +84,8 @@ jobs:
         run: |
           if [ -d publish-out/images ]; then
             # 블로그 이미지는 객체 ACL(public-read)로 공개된다 (버킷 정책 공개 경로는 public/·edu/ 뿐)
-            aws s3 sync publish-out/images/ s3://comento-s3-bucket/ --acl public-read --cache-control "public, max-age=31536000"
+            # sync 는 대상 버킷 목록 조회(ListBucket)가 필요하다 — 서비스 공용 버킷이라 목록 권한은 주지 않고 cp 로 올린다
+            aws s3 cp publish-out/images/ s3://comento-s3-bucket/ --recursive --acl public-read --cache-control "public, max-age=31536000"
           fi
 
       - name: Build (기존 글 + 이 글)
