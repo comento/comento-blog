@@ -6,6 +6,7 @@ import path from "node:path";
 import { parse as parseYaml, stringify } from "yaml";
 import { OUT_DIR, SITE, children, existingPosts, log, normTitle, notion, plain } from "./lib.mjs";
 import { Renderer, normalizeHeadings } from "./render.mjs";
+import { ICONS, makeAiCover } from "./cover.mjs";
 import { aiReview, factCheck, htmlToText } from "./review.mjs";
 
 const BLOG_DB = "9ad74b21-4c6a-4658-a841-e135a20a1a96";
@@ -27,7 +28,9 @@ const finish = () => {
 const page = await notion(`/pages/${pageId}`);
 const dbId = (page.parent?.database_id ?? "").replace(/-/g, "");
 const stages = (page.properties["단계"]?.multi_select ?? []).map((o) => o.name);
-if (dbId !== BLOG_DB.replace(/-/g, "") || !stages.includes(PUBLISH_STAGE)) {
+// 미리보기(dry_run)는 단계와 무관하게 돌려 볼 수 있다 — 게시 전에 결과·커버를 확인하는 용도
+const anyStage = process.env.DRY_RUN === "true";
+if (dbId !== BLOG_DB.replace(/-/g, "") || (!anyStage && !stages.includes(PUBLISH_STAGE))) {
   result.status = "skip";
   result.reason = dbId !== BLOG_DB.replace(/-/g, "") ? "개발자 블로그 DB 의 카드가 아님" : `단계에 '${PUBLISH_STAGE}' 없음 (${stages.join(",") || "비어 있음"})`;
   finish();
@@ -77,11 +80,14 @@ try {
 }
 if (!htmlToText(html).trim()) result.blocking.push("본문이 비어 있습니다.");
 
-// 커버가 없으면: 기존 글은 이전 커버를 유지(아래 prevFm), 새 글은 중단
+// 커버: 노션 커버 → (기존 글) 이전 커버 → (새 글) AI 커버 → 본문 첫 이미지 → 없으면 중단. AI 커버는 점검 뒤에 만든다.
 let featureImage = null;
 const cover = page.cover;
-if (cover) featureImage = await r.asset(cover.type === "external" ? cover.external.url : cover.file.url, "cover");
-if (!cover && !existing) result.blocking.push("커버 이미지가 없습니다 — 노션 페이지 상단에 커버를 추가해 주세요(목록 카드 이미지로 쓰입니다).");
+if (cover) {
+  featureImage = await r.asset(cover.type === "external" ? cover.external.url : cover.file.url, "cover");
+  result.coverSource = "노션 커버";
+}
+const firstBodyImage = r.assets.find((a) => /-img1\./.test(a.key));
 
 let authorImage = posts.find((p) => p.authorName === author?.name && p.authorImage)?.authorImage ?? null;
 if (!author) result.blocking.push("작성자가 비어 있습니다.");
@@ -92,8 +98,25 @@ const fc = await factCheck({ title, html, facts: r.facts });
 result.blocking.push(...fc.blocking);
 result.notes.push(...fc.notes);
 const tags = [...new Set(posts.map((p) => p.tag).filter(Boolean))];
-result.ai = result.blocking.length ? { skipped: "발행을 막는 문제가 있어 AI 검토를 건너뛰었습니다." } : await aiReview({ title, html, tags });
+result.ai = result.blocking.length ? { skipped: "발행을 막는 문제가 있어 AI 검토를 건너뛰었습니다." } : await aiReview({ title, html, tags, icons: Object.keys(ICONS) });
 const s = result.ai?.suggestion;
+
+if (!featureImage && !existing && !result.blocking.length) {
+  if (s?.cover_scene) {
+    try {
+      featureImage = r.saveBuffer(await makeAiCover({ scene: s.cover_scene, keyword: s.cover_keyword, icon: ICONS[s.cover_icon] ? s.cover_icon : null }), "cover-ai");
+      result.coverSource = "AI";
+      result.coverScene = `${s.cover_keyword}${ICONS[s.cover_icon] ? ` (아이콘: ${s.cover_icon})` : ""} — ${s.cover_scene}`;
+    } catch (e) {
+      result.notes.push(`AI 커버 생성 실패(${e.message.slice(0, 120)}) — 다른 방법으로 대체했습니다.`);
+    }
+  }
+  if (!featureImage && firstBodyImage) {
+    featureImage = `https://cdn.comento.kr/${firstBodyImage.key}`;
+    result.coverSource = "본문 첫 이미지";
+  }
+  if (!featureImage) result.blocking.push("커버 이미지가 없습니다 — 노션 페이지 상단에 커버를 추가해 주세요(목록 카드 이미지로 쓰입니다).");
+}
 
 // ── 주소: 기존 글은 그대로, 새 글은 AI 제안 slug + 발행일(UTC, 기존 글과 같은 규칙)
 let urlSlug = existing?.urlSlug;
