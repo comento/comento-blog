@@ -1,0 +1,134 @@
+name: Publish from Notion
+
+# 노션 '개발자 블로그' 카드가 '게시'가 되면 Lambda(comento-blog-notion-relay)가 이 워크플로를 실행한다.
+# 한 실행 안에서 변환 → 점검 → 원본 저장 → 빌드 → 배포 → 노션 기록까지 끝낸다
+# (GITHUB_TOKEN 으로 만든 커밋·PR 은 다른 워크플로를 트리거하지 않으므로 워크플로를 잇지 않는다).
+on:
+  workflow_dispatch:
+    inputs:
+      page_id:
+        description: 노션 페이지 ID
+        required: true
+        type: string
+      dry_run:
+        description: 미리보기 — 변환·점검·빌드만 하고 배포·노션 URL 기록은 하지 않음
+        type: boolean
+        default: false
+      force_overwrite:
+        description: Ghost 시절 글(옮겨 온 최종본)을 노션 내용으로 덮어쓰기 — 수동 실행 전용
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write # GitHub OIDC → AWS 역할 (정적 키 없음)
+  contents: read
+
+concurrency:
+  group: blog-site-deploy # Deploy Website 와 같은 그룹 — 사이트 동시 배포 방지
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PAGE_ID: ${{ inputs.page_id }}
+      DRY_RUN: ${{ inputs.dry_run }}
+      FORCE_OVERWRITE: ${{ inputs.force_overwrite }}
+    steps:
+      - name: Validate input
+        run: '[[ "$PAGE_ID" =~ ^[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}$ ]] || { echo "잘못된 page_id"; exit 1; }'
+
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::744549229387:role/comento/oidc-github-comento-blog-prod
+          aws-region: ap-northeast-2
+
+      - name: Install modules
+        run: |
+          npm config set //npm.pkg.github.com/:_authToken ${{ secrets.PRIVATE_REGISTRY_TOKEN }}
+          pnpm install --frozen-lockfile
+
+      - name: Load secrets (SSM .env COMENTO_BLOG_PROD)
+        run: |
+          T=$(aws ssm get-parameter --name COMENTO_BLOG_PROD --with-decryption --query Parameter.Value --output text | sed -n 's/^NOTION_TOKEN=//p')
+          [ -n "$T" ] || { echo "COMENTO_BLOG_PROD 에 NOTION_TOKEN 이 없습니다"; exit 1; }
+          echo "::add-mask::$T"
+          echo "NOTION_TOKEN=$T" >> "$GITHUB_ENV"
+
+      - name: Notify start
+        if: inputs.dry_run == false
+        run: node scripts/publish/report.mjs "$PAGE_ID" started
+
+      - name: Fetch posts (s3 _source)
+        run: pnpm fetch:posts
+
+      - name: Prepare (Notion → HTML · 점검)
+        id: prep
+        run: node scripts/publish/prepare.mjs "$PAGE_ID"
+
+      - name: Upload images (cdn.comento.kr)
+        if: steps.prep.outputs.status == 'ok' && inputs.dry_run == false
+        run: |
+          if [ -d publish-out/images ]; then
+            # 블로그 이미지는 객체 ACL(public-read)로 공개된다 (버킷 정책 공개 경로는 public/·edu/ 뿐)
+            aws s3 sync publish-out/images/ s3://comento-s3-bucket/ --acl public-read --cache-control "public, max-age=31536000"
+          fi
+
+      - name: Build (기존 글 + 이 글)
+        if: steps.prep.outputs.status == 'ok'
+        env:
+          SLUG: ${{ steps.prep.outputs.slug }}
+        run: |
+          mkdir -p "src/content/posts/$SLUG"
+          cp "publish-out/post/$SLUG/index.md" "src/content/posts/$SLUG/index.md"
+          pnpm build
+          test -f "dist/post/$SLUG/index.html"
+
+      - name: Save source (s3 _source)
+        if: steps.prep.outputs.status == 'ok' && inputs.dry_run == false
+        env:
+          SLUG: ${{ steps.prep.outputs.slug }}
+        run: aws s3 cp "publish-out/post/$SLUG/index.md" "s3://developer.comento.kr/_source/$SLUG/index.md" --content-type "text/markdown; charset=utf-8"
+
+      - name: Deploy site
+        if: steps.prep.outputs.status == 'ok' && inputs.dry_run == false
+        run: |
+          aws s3 sync ./dist/ s3://${{ secrets.BUCKET_ID }} --exclude "_source/*"
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.DISTRIBUTION_ID }} --paths "/*"
+
+      - name: Report to Notion
+        if: success()
+        env:
+          STATUS: ${{ steps.prep.outputs.status }}
+        run: |
+          case "$STATUS" in ok) M=published ;; blocked) M=blocked ;; *) echo "대상 아님 — 기록 생략"; exit 0 ;; esac
+          [ "$DRY_RUN" = "true" ] && M=dry-run
+          node scripts/publish/report.mjs "$PAGE_ID" "$M"
+
+      - name: Report failure to Notion
+        if: failure() && env.NOTION_TOKEN != ''
+        run: node scripts/publish/report.mjs "$PAGE_ID" failed
+
+      - name: Keep result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-out
+          path: |
+            publish-out/result.json
+            publish-out/post/
+          if-no-files-found: ignore
+          retention-days: 14

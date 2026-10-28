@@ -6,6 +6,10 @@ permissions:
   id-token: write # GitHub OIDC → AWS 역할 (정적 키 없음)
   contents: read
 
+concurrency:
+  group: blog-site-deploy # Publish from Notion 과 같은 그룹 — 사이트 동시 배포 방지
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
