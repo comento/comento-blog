@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # 글 원본 (s3://developer.comento.kr/_source/ 에서 pnpm fetch:posts 로 받음)
 src/content/posts/
+
+# 발행 파이프라인 작업물 · 로컬 pnpm 저장소
+publish-out/
+.pnpm-store/
